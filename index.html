@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0b0c" />
+
+    <title>Client Portal Starter Kit — security you can check, not claims you have to trust</title>
+    <meta
+      name="description"
+      content="A client portal in React, TypeScript and Supabase. Per-client isolation is enforced in Postgres and proven by a sweep that breaks each protection on purpose to show a test catches it. 40 guards swept, 37 proven, 3 named."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Client Portal Starter Kit — security you can check, not claims you have to trust"
+    />
+    <meta
+      property="og:description"
+      content="A client portal in React, TypeScript and Supabase. Per-client isolation is enforced in Postgres and proven by a sweep that breaks each protection on purpose to show a test catches it. 40 guards swept, 37 proven, 3 named."
+    />
+    <meta property="og:image" content="/assets/video/hero-poster.webp" />
+    <meta
+      property="og:image:alt"
+      content="Terminal output from the Client Portal Starter Kit guard sweep."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Client Portal Starter Kit — security you can check, not claims you have to trust"
+    />
+    <meta
+      name="twitter:description"
+      content="A client portal in React, TypeScript and Supabase. Per-client isolation is enforced in Postgres and proven by a sweep that breaks each protection on purpose to show a test catches it. 40 guards swept, 37 proven, 3 named."
+    />
+
+    <!-- Apply the stored language before first paint, so an Arabic reader never
+         sees a frame of left-to-right layout. React takes over from here. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('cpsk-locale')
+          if (stored === 'ar' || stored === 'en') {
+            document.documentElement.lang = stored
+            document.documentElement.dir = stored === 'ar' ? 'rtl' : 'ltr'
+          }
+        } catch (e) {
+          /* storage unavailable; default English stays */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
