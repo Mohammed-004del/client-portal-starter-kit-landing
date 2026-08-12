@@ -27,8 +27,13 @@
   --color-pass: #34d399;
   --color-fail: #f87171;
 
-  --text-hero: clamp(2rem, 1.15rem + 4.1vw, 4.25rem);
+  /* The H1 now sits in a half-width column beside the device, so it comes down
+     from a 4.25rem cap. It reads larger than before relative to its column —
+     that is the trick the reference uses. */
+  --text-hero: clamp(1.875rem, 1.1rem + 2.6vw, 3.25rem);
   --text-section: clamp(1.5rem, 1.05rem + 2.1vw, 2.5rem);
+  /* Kept separate so shrinking the headline never shrinks the price. */
+  --text-display: clamp(3rem, 2rem + 3.6vw, 4.75rem);
 }
 
 @layer base {
@@ -207,6 +212,91 @@
     width: 100%;
   }
 
+  /* ------------------------------------------------------- hero device */
+  /* A drawn device, not an illustration: the screen holds the real recording.
+     Everything that moves here animates transform/opacity only, so it runs on
+     the compositor exactly like the ambient blobs. */
+  .device {
+    position: relative;
+    transform-style: preserve-3d;
+    animation: device-float 7s ease-in-out infinite alternate;
+  }
+
+  .device-screen {
+    position: relative;
+    border-radius: 0.9rem;
+    padding: 0.5rem;
+    background: linear-gradient(150deg, rgba(157, 123, 248, 0.85), rgba(34, 211, 238, 0.35) 45%, rgba(157, 123, 248, 0.1) 85%);
+    box-shadow:
+      0 50px 130px -40px rgba(124, 58, 237, 0.9),
+      0 0 80px -30px rgba(34, 211, 238, 0.45);
+  }
+
+  .device-screen > * {
+    display: block;
+    width: 100%;
+    border-radius: 0.55rem;
+    background: var(--color-surface);
+  }
+
+  /* The lip below the screen. Pure decoration, drawn rather than imported. */
+  .device-base {
+    height: 0.75rem;
+    margin-inline: auto;
+    width: 82%;
+    border-radius: 0 0 0.9rem 0.9rem;
+    background: linear-gradient(180deg, rgba(157, 123, 248, 0.45), rgba(11, 8, 24, 0.9));
+    box-shadow: 0 24px 40px -22px rgba(124, 58, 237, 0.9);
+  }
+
+  /* Floating decorations. Each gets its own period so they never sync up. */
+  .float-mark {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    border-radius: 1rem;
+    border: 1px solid var(--color-line-strong);
+    background: color-mix(in srgb, var(--color-raised) 85%, transparent);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 16px 40px -18px rgba(124, 58, 237, 0.9);
+    color: var(--color-accent);
+  }
+
+  .float-a {
+    animation: float-a 6s ease-in-out infinite alternate;
+  }
+  .float-b {
+    animation: float-b 8s ease-in-out infinite alternate;
+    animation-delay: -2s;
+  }
+  .float-c {
+    animation: float-c 9s ease-in-out infinite alternate;
+    animation-delay: -4s;
+  }
+
+  /* Slow bloom behind the device. */
+  .device-bloom {
+    position: absolute;
+    /* Horizontal inset stays at 0: a negative one widens the layout box and
+       adds horizontal scroll. The blur still bleeds past the edge visually,
+       because filters paint outside the box without affecting layout. */
+    inset: 12% 0 -12% 0;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.5), transparent 70%);
+    filter: blur(60px);
+    animation: bloom-pulse 6s ease-in-out infinite alternate;
+    z-index: -1;
+  }
+
+  /* Technology strip under the hero, as in the reference. */
+  .tech-band {
+    /* Top only: the section that follows supplies its own top border, so
+       border-block here would draw a double rule. */
+    border-block-start: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
   /* Primary action. The bloom is a shadow, so hover costs no layout. */
   .btn-primary {
     background: linear-gradient(180deg, var(--color-accent-strong), #6d28d9);
@@ -238,6 +328,53 @@
       border-color: var(--color-accent);
       transform: translateY(-2px);
     }
+  }
+}
+
+@keyframes device-float {
+  from {
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes float-a {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes float-b {
+  from {
+    transform: translate3d(0, -8px, 0);
+  }
+  to {
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes float-c {
+  from {
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes bloom-pulse {
+  from {
+    opacity: 0.55;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 0.9;
+    transform: scale(1.08);
   }
 }
 
@@ -293,9 +430,14 @@
     transition-duration: 0.01ms !important;
   }
 
-  /* The blobs stop moving but stay painted, so the page keeps its depth
-     instead of flattening to a plain black rectangle. */
-  .ambient-blob {
+  /* These stop moving but stay painted, so the page keeps its depth instead of
+     flattening to a plain black rectangle. `animation: none` rather than a
+     0.01ms duration, so each element rests at its natural position rather than
+     snapped to the end of its keyframe. */
+  .ambient-blob,
+  .device,
+  .device-bloom,
+  .float-mark {
     animation: none !important;
   }
 }

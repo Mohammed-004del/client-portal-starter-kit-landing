@@ -333,6 +333,23 @@ const stillHidden = await moPage.evaluate(() =>
   ).length,
 )
 ok('every reveal has fired after scrolling the page', stillHidden === 0, `${stillHidden} still hidden`)
+
+// The hero device is supposed to drift continuously. Sample its transform
+// twice — "it animates" is a claim, and this is the measurement behind it.
+await moPage.evaluate(() => window.scrollTo(0, 0))
+const readDevice = () =>
+  moPage.evaluate(() => {
+    const el = document.querySelector('.device')
+    return el ? getComputedStyle(el).transform : null
+  })
+const dev1 = await readDevice()
+await moPage.waitForTimeout(1800)
+const dev2 = await readDevice()
+ok(
+  'hero device is actually animating',
+  dev1 !== null && dev2 !== null && dev1 !== dev2,
+  `${dev1} -> ${dev2}`,
+)
 await mo.close()
 
 // --------------------------------------------------------------- console

@@ -57,10 +57,13 @@ function Ambient() {
  */
 function BrandMarks() {
   return (
-    <ul aria-hidden="true" className="mt-8 flex flex-wrap items-center gap-x-10 gap-y-6">
+    <ul
+      aria-hidden="true"
+      className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-14 gap-y-6 px-5 py-8 sm:px-8"
+    >
       {/* React */}
-      <li className="text-muted/70 transition-colors hover:text-accent">
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor">
+      <li className="text-muted transition-colors hover:text-accent">
+        <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor">
           <circle cx="12" cy="12" r="2.05" fill="currentColor" stroke="none" />
           <g strokeWidth="1">
             <ellipse cx="12" cy="12" rx="11" ry="4.2" />
@@ -70,20 +73,20 @@ function BrandMarks() {
         </svg>
       </li>
       {/* TypeScript */}
-      <li className="text-muted/70 transition-colors hover:text-accent">
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="currentColor">
+      <li className="text-muted transition-colors hover:text-accent">
+        <svg viewBox="0 0 24 24" className="h-9 w-9" fill="currentColor">
           <path d="M1.5 1.5h21v21h-21zM13.2 12.6h3v6.3c0 1.5 1.1 2.4 2.9 2.4 1.6 0 2.7-.9 2.7-2.3 0-1.2-.7-1.9-2.4-2.3l-1-.2c-.6-.2-.9-.4-.9-.8 0-.4.4-.7 1-.7.6 0 1 .3 1.1.8h2.6c-.1-1.6-1.4-2.6-3.6-2.6-2.2 0-3.6 1-3.6 2.7 0 1.3.8 2 2.4 2.4l1 .2c.7.2 1 .4 1 .8 0 .4-.4.7-1.1.7-.7 0-1.2-.3-1.3-.9h-2.8zm-1.1 0H5.4v1.7h2.3v6.9h1.9v-6.9h2.3z" />
         </svg>
       </li>
       {/* Supabase */}
-      <li className="text-muted/70 transition-colors hover:text-accent">
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="currentColor">
+      <li className="text-muted transition-colors hover:text-accent">
+        <svg viewBox="0 0 24 24" className="h-9 w-9" fill="currentColor">
           <path d="M21.362 9.354H12V.396a.396.396 0 0 0-.716-.233L2.203 12.424l-.401.562a1.04 1.04 0 0 0 .836 1.659H12v8.959a.396.396 0 0 0 .716.233l9.081-12.261.401-.562a1.04 1.04 0 0 0-.836-1.66z" />
         </svg>
       </li>
       {/* Tailwind CSS */}
-      <li className="text-muted/70 transition-colors hover:text-accent">
-        <svg viewBox="0 0 24 24" className="h-8 w-8" fill="currentColor">
+      <li className="text-muted transition-colors hover:text-accent">
+        <svg viewBox="0 0 24 24" className="h-9 w-9" fill="currentColor">
           <path d="M12 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12 4.8zM6 12c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C7.666 17.818 9.027 19.2 12 19.2c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6 12z" />
         </svg>
       </li>
@@ -98,7 +101,7 @@ function Nav() {
     <header data-nav className="fixed inset-x-0 top-0 z-50 border-b">
       <nav
         aria-label={t({ en: 'Primary', ar: 'التنقل الرئيسي' })}
-        className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-5 sm:px-8"
+        className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-5 sm:px-8"
       >
         <a
           href="#top"
@@ -149,74 +152,145 @@ function Nav() {
   )
 }
 
+/** Small shield mark that ties the guarantee to the offer above it. */
+function ShieldMark() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="mt-0.5 size-4 shrink-0 text-accent"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 2.5 4.5 5.6v5.6c0 4.6 3.2 8.9 7.5 10 4.3-1.1 7.5-5.4 7.5-10V5.6z" />
+      <path d="m9 12 2.2 2.2L15.4 10" />
+    </svg>
+  )
+}
+
+/**
+ * The hero visual: a device drawn in CSS holding the real recording, with
+ * decorative marks floating around it. Nothing here depicts data — the only
+ * thing showing product content is the video itself.
+ */
+function HeroDevice() {
+  const { t } = useLocale()
+
+  return (
+    <div data-hero-frame className="relative perspective-[1600px]">
+      <div aria-hidden="true" className="device-bloom" />
+
+      <div className="device">
+        <div className="device-screen">
+          <video
+            width={1440}
+            height={810}
+            poster={ASSETS.heroPoster}
+            controls
+            playsInline
+            preload="metadata"
+          >
+            <source src={ASSETS.heroVideoWebm} type="video/webm" />
+            <source src={ASSETS.heroVideoMp4} type="video/mp4" />
+            {t(HERO.videoUnsupported)}
+          </video>
+        </div>
+        <div aria-hidden="true" className="device-base" />
+
+        {/* Decoration only. Hidden on the smallest screens, where they would
+            crowd the device rather than frame it. */}
+        <div aria-hidden="true" className="float-mark float-a hidden size-14 sm:grid -end-6 top-8">
+          <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6.5 18.5A4.5 4.5 0 0 1 6 9.6a6 6 0 0 1 11.6-1.6A4 4 0 0 1 18 18.5z" />
+            <path d="M12 15.5v-5M9.6 12.4 12 10l2.4 2.4" />
+          </svg>
+        </div>
+
+        <div aria-hidden="true" className="float-mark float-b hidden size-14 lg:grid -end-10 bottom-14">
+          <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 3.5H7a1.5 1.5 0 0 0-1.5 1.5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8z" />
+            <path d="M14 3.5V8h4.5M9 13h6M9 16.5h4" />
+          </svg>
+        </div>
+
+        <div aria-hidden="true" className="float-mark float-c hidden size-16 md:grid -start-8 bottom-4">
+          <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2.5 4.5 5.6v5.6c0 4.6 3.2 8.9 7.5 10 4.3-1.1 7.5-5.4 7.5-10V5.6z" />
+            <rect x="9.2" y="10.8" width="5.6" height="4.4" rx="1" />
+            <path d="M10.6 10.8V9.6a1.4 1.4 0 0 1 2.8 0v1.2" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function Hero() {
   const { t } = useLocale()
 
   return (
-    <section id="top" className="relative px-5 pt-32 pb-20 sm:px-8 md:pt-40 md:pb-28">
-      <div className="mx-auto max-w-5xl">
-        <h1 className="max-w-4xl text-hero font-bold leading-[1.08] tracking-tight text-balance">
-          <span data-hero className="block">
-            {t(HERO.h1Line1)}
-          </span>
-          <span
-            data-hero
-            className="mt-2 block bg-linear-to-br from-accent via-accent to-glow bg-clip-text text-transparent"
-          >
-            {t(HERO.h1Line2)}
-          </span>
-        </h1>
+    // overflow-x-clip, not hidden: `clip` contains the floating marks that sit
+    // outside the device without creating a scroll container — `hidden` would
+    // make this a scroller and break ScrollTrigger, the same trap as on body.
+    <section
+      id="top"
+      className="relative overflow-x-clip px-5 pt-28 pb-16 sm:px-8 md:pt-36 md:pb-20"
+    >
+      {/* Two columns from lg up: copy beside the device, as in the reference.
+          Grid order (not left/right) so RTL mirrors structurally. */}
+      <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-6">
+          <h1 className="text-hero font-bold leading-[1.1] tracking-tight text-balance">
+            <span data-hero className="block">
+              {t(HERO.h1Line1)}
+            </span>
+            <span
+              data-hero
+              className="mt-2 block bg-linear-to-br from-accent via-accent to-glow bg-clip-text text-transparent"
+            >
+              {t(HERO.h1Line2)}
+            </span>
+          </h1>
 
-        <p
-          data-hero
-          className="mt-8 max-w-3xl text-base leading-relaxed text-muted md:text-lg"
-        >
-          {t(HERO.sub)}
-        </p>
+          <p data-hero className="mt-7 max-w-xl text-base leading-relaxed text-muted">
+            {t(HERO.sub)}
+          </p>
 
-        <div data-hero className="mt-10 flex flex-wrap items-center gap-3">
-          <a
-            href="#walkthrough"
-            className="btn-ghost inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-base font-semibold text-fg"
-          >
-            {t(OFFER.watch)}
-          </a>
-          <a
-            href={CHECKOUT_URL}
-            aria-label={t(OFFER.buyAria)}
-            className="btn-primary inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-base font-semibold"
-          >
-            {t(OFFER.buy)}
-            <Arrow />
-          </a>
+          {/* The offer. Deliberately the heaviest thing in the column. */}
+          <div data-hero className="mt-9 flex flex-wrap items-center gap-3">
+            <a
+              href={CHECKOUT_URL}
+              aria-label={t(OFFER.buyAria)}
+              className="btn-primary inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-lg font-semibold"
+            >
+              {t(OFFER.buy)}
+              <Arrow />
+            </a>
+            <a
+              href="#walkthrough"
+              className="btn-ghost inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 text-base font-semibold text-fg"
+            >
+              {t(OFFER.watch)}
+            </a>
+          </div>
+
+          {/* The promise, set apart from the offer by a rule and a mark so the
+              two do not read as one block of small print. */}
+          <div data-hero className="mt-8 max-w-xl border-t border-line pt-5">
+            <p className="flex gap-2.5 text-sm leading-relaxed text-muted" data-guarantee>
+              <ShieldMark />
+              <span>{t(OFFER.guarantee)}</span>
+            </p>
+          </div>
         </div>
 
-        <p
-          data-hero
-          className="mt-5 max-w-2xl text-sm leading-relaxed text-muted"
-          data-guarantee
-        >
-          {t(OFFER.guarantee)}
-        </p>
-
-        <figure className="mt-16 perspective-[1400px]">
-          <div data-hero-frame className="glow-frame">
-            <video
-              className="bg-surface"
-              width={1440}
-              height={810}
-              poster={ASSETS.heroPoster}
-              controls
-              playsInline
-              preload="metadata"
-            >
-              <source src={ASSETS.heroVideoWebm} type="video/webm" />
-              <source src={ASSETS.heroVideoMp4} type="video/mp4" />
-              {t(HERO.videoUnsupported)}
-            </video>
-          </div>
-          <figcaption className="mt-4 text-sm text-faint">{t(HERO.videoCaption)}</figcaption>
-        </figure>
+        <div className="lg:col-span-6">
+          <HeroDevice />
+          <p className="mt-6 text-sm text-faint">{t(HERO.videoCaption)}</p>
+        </div>
       </div>
     </section>
   )
@@ -495,9 +569,6 @@ function Stack() {
     <Section id="stack" eyebrow={t(STACK.eyebrow)}>
       <SectionHeading id="stack-heading">{t(STACK.heading)}</SectionHeading>
       <Prose paragraphs={[t(STACK.intro)]} />
-      <Reveal>
-        <BrandMarks />
-      </Reveal>
       <DefList items={STACK.groups} columns={2} />
       <Reveal>
         <p className="mt-8 max-w-3xl text-sm leading-relaxed text-faint">{t(STACK.auditNote)}</p>
@@ -521,7 +592,7 @@ function Pricing() {
           <div className="bg-surface p-6 sm:p-10">
             <p className="flex flex-wrap items-baseline gap-3">
               <span
-                className="bg-linear-to-br from-fg to-accent bg-clip-text text-6xl font-bold tracking-tight text-transparent md:text-7xl"
+                className="bg-linear-to-br from-fg to-accent bg-clip-text text-display font-bold tracking-tight text-transparent"
                 dir="ltr"
               >
                 ${PRICE_USD}
@@ -667,6 +738,10 @@ export default function App() {
       <Nav />
       <main id="main">
         <Hero />
+        {/* Decoration, no labels — the technologies are named in §8's copy. */}
+        <div className="tech-band">
+          <BrandMarks />
+        </div>
         <Problem />
         <Differentiator />
         <Enforcement />
