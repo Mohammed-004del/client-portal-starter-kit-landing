@@ -15,18 +15,11 @@ export const CHECKOUT_URL = 'https://PLACEHOLDER.lemonsqueezy.com/checkout/buy/R
 export const CHECKOUT_IS_PLACEHOLDER = CHECKOUT_URL.includes('PLACEHOLDER')
 
 /**
- * Form service endpoint (Formspree or any POST-to-URL service), set via VITE_FORM_ENDPOINT.
- * Unset means the email form reports itself unconfigured rather than silently doing nothing.
+ * The only way to reach a human here. A mailto: rather than a form service:
+ * this page has no backend by design, and a third-party form would be the one
+ * external dependency on an otherwise entirely self-hosted page.
  */
-export const FORM_ENDPOINT: string | undefined = import.meta.env.VITE_FORM_ENDPOINT
-
-/** Footer legal links. All placeholders until real pages exist. */
-export const PLACEHOLDER_LINKS = {
-  refund: '#refund-policy',
-  privacy: '#privacy-policy',
-  terms: '#terms',
-  contact: 'mailto:REPLACE-ME@example.com',
-} as const
+export const CONTACT_EMAIL = 'mohammedmahmoodhamed004@gmail.com'
 
 /** Asset paths, copied one-way out of demo-assets/ at build time. */
 export const ASSETS = {
@@ -38,4 +31,16 @@ export const ASSETS = {
   walkthroughPoster: '/assets/video/walkthrough-poster.webp',
   proofTypedAdmin: '/assets/proof/01-typed-admin.png',
   proofBackOnPortal: '/assets/proof/02-back-on-portal.png',
+  screenshot: (stem: string) => `/assets/screenshots/${stem}.png`,
+} as const
+
+/**
+ * The captured runs, served as plain text so a prospect can read the evidence
+ * before buying rather than being asked to take the excerpts on trust.
+ */
+export const RUNS = {
+  fullSweep: '/assets/terminal/full-sweep.txt',
+  securitySuite: '/assets/terminal/test-security.txt',
+  filteredSweep: '/assets/terminal/filtered-sweep.txt',
+  lighthouse: '/assets/terminal/lighthouse-audit.txt',
 } as const

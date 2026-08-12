@@ -1,0 +1,13 @@
+
+> client-portal-starter-kit@0.1.0 test:security
+> vitest run tests/security
+
+
+ RUN  v4.1.10 D:/Client Portal Starter Kit
+
+
+ Test Files  7 passed (7)
+      Tests  61 passed (61)
+   Start at  22:48:25
+   Duration  7.51s (transform 128ms, setup 0ms, import 663ms, tests 5.52s, environment 1ms)
+

@@ -48,6 +48,28 @@ ok('default locale is en/ltr', en.lang === 'en' && en.dir === 'ltr', `${en.lang}
 ok('English title set', en.title.includes('security you can check'), en.title.slice(0, 50))
 
 // --------------------------------------------------- every asset resolves
+// Images are lazy, so they only load once they have been near the viewport.
+// Measuring before that reports "broken" for every image below the fold —
+// and, worse, would let a genuinely broken path hide in the same noise.
+await page.evaluate(async () => {
+  for (let y = 0; y < document.documentElement.scrollHeight; y += 400) {
+    window.scrollTo(0, y)
+    await new Promise((r) => setTimeout(r, 60))
+  }
+})
+// networkidle is not enough here: it can resolve in the gap before the last
+// batch of lazy requests starts. Wait on the images themselves, and let the
+// timeout fall through so a genuinely broken path is still reported per-image
+// below rather than being swallowed as a thrown error.
+await page
+  .waitForFunction(
+    () => [...document.querySelectorAll('img')].every((i) => i.complete),
+    null,
+    { timeout: 20000 },
+  )
+  .catch(() => {})
+await page.evaluate(() => window.scrollTo(0, 0))
+
 const assets = await page.evaluate(async () => {
   const imgs = [...document.querySelectorAll('img')].map((i) => ({
     kind: 'img',
@@ -104,6 +126,83 @@ for (const a of anchors) {
   ok(`anchor ${a.href} ("${a.label}") has a target`, a.resolves)
 }
 
+// ------------------------------- click everything and see it do something
+// Reading the href only proves it points somewhere. These actually click.
+//
+// Run under reduced motion: the page's own CSS switches scroll-behavior to
+// auto there, so each jump lands immediately and the assertion is exact
+// rather than racing a multi-second smooth scroll.
+const clickCtx = await browser.newContext({
+  viewport: { width: 1440, height: 900 },
+  reducedMotion: 'reduce',
+})
+const clickPage = await clickCtx.newPage()
+await clickPage.goto(URL, { waitUntil: 'networkidle' })
+
+for (const href of await clickPage.evaluate(() =>
+  [...new Set([...document.querySelectorAll('a[href^="#"]')].map((a) => a.getAttribute('href')))],
+)) {
+  if (href === '#main') continue // skip link, only reachable by keyboard
+  await clickPage.evaluate(() => window.scrollTo(0, 0))
+  await clickPage.click(`a[href="${href}"]`, { timeout: 5000 })
+  await clickPage.waitForTimeout(250)
+  const moved = await clickPage.evaluate((h) => {
+    const target = document.querySelector(h)
+    if (!target) return { ok: false, why: 'no target' }
+    const top = target.getBoundingClientRect().top
+    // Fixed nav is 4rem; scroll-padding-top reserves 5.5rem above the target.
+    return { ok: top >= -2 && top < 140, why: `target ${Math.round(top)}px from top` }
+  }, href)
+  ok(`click ${href} scrolls to its target`, moved.ok, moved.why)
+}
+await clickCtx.close()
+
+// Off-site buttons: assert the destination, do not navigate away.
+const buyHrefs = await page.evaluate(() =>
+  [...document.querySelectorAll('a[href^="http"]')].map((a) => a.getAttribute('href')),
+)
+ok('every buy button has an absolute destination', buyHrefs.length > 0 && buyHrefs.every((h) => /^https?:\/\/.+/.test(h)), `${buyHrefs.length} links`)
+
+// FAQ disclosures must actually open.
+const faqCount = await page.locator('details').count()
+await page.locator('details summary').first().click()
+await page.waitForTimeout(200)
+ok(
+  'FAQ disclosure opens on click',
+  await page.locator('details').first().evaluate((d) => d.open),
+  `${faqCount} questions`,
+)
+await page.locator('details summary').first().click()
+await page.waitForTimeout(200)
+ok(
+  'FAQ disclosure closes again',
+  !(await page.locator('details').first().evaluate((d) => d.open)),
+)
+
+// Contact is a mailto, not a form. It must carry a real address, and the
+// visible text must match the address it actually opens.
+const mailto = await page.evaluate(() => {
+  const a = document.querySelector('a[href^="mailto:"]')
+  return a ? { href: a.getAttribute('href'), text: (a.textContent || '').trim() } : null
+})
+ok(
+  'contact link is a real mailto and shows the address it opens',
+  !!mailto &&
+    /^mailto:[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mailto.href) &&
+    mailto.href === `mailto:${mailto.text}`,
+  mailto ? `${mailto.href} / shows "${mailto.text}"` : 'no mailto link found',
+)
+ok('no form remains on the page', (await page.locator('form').count()) === 0)
+
+// Placeholder policy links must not be dead anchors.
+const deadFooterLinks = await page.evaluate(() =>
+  [...document.querySelectorAll('footer a')]
+    .map((a) => a.getAttribute('href'))
+    .filter((h) => !h || h === '#' || (h.startsWith('#') && !document.querySelector(h))),
+)
+ok('no dead links in the footer', deadFooterLinks.length === 0, deadFooterLinks.join(' | '))
+
+await page.evaluate(() => window.scrollTo(0, 0))
 await page.screenshot({ path: `${SHOTS}/1440-ltr.png`, fullPage: true })
 
 // ------------------------------------------------------ toggle to Arabic

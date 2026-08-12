@@ -21,6 +21,20 @@ function setMeta(selector: string, value: string) {
   document.head.querySelector(selector)?.setAttribute('content', value)
 }
 
+/**
+ * Arabic faces are fetched the first time Arabic is selected, not on every
+ * first paint. font-display: swap means the text is readable throughout; it
+ * re-renders in Plex Arabic once the files land.
+ */
+let arabicFonts: Promise<unknown> | undefined
+function loadArabicFonts() {
+  arabicFonts ??= Promise.all([
+    import('@fontsource/ibm-plex-sans-arabic/arabic-400.css'),
+    import('@fontsource/ibm-plex-sans-arabic/arabic-600.css'),
+  ])
+  return arabicFonts
+}
+
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(readStoredLocale)
 
@@ -37,6 +51,8 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement
     root.lang = locale
     root.dir = DIR[locale]
+
+    if (locale === 'ar') void loadArabicFonts()
 
     document.title = META.title[locale]
     setMeta('meta[name="description"]', META.description[locale])

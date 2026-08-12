@@ -15,7 +15,9 @@
   --color-line-strong: #3d3d45;
   --color-fg: #f2f2f4;
   --color-muted: #a6a6b0;
-  --color-faint: #74747f;
+  /* Lightened from #74747f, which measured 4.26:1 on --color-bg and failed
+     WCAG AA for small text. This clears 4.5:1 on bg, surface and raised. */
+  --color-faint: #85858e;
   --color-accent: #f5a524;
   --color-accent-ink: #1a1200;
   --color-pass: #4ade80;

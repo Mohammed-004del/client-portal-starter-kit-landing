@@ -1,0 +1,15 @@
+
+Guard sweep: 1 guards
+
+Baseline: 61 tests, all passing.
+
+  definer:is_active_user ... 1 test(s) turned red:
+      RED  a deactivated client can still sign in but reads nothing
+      restored -> suite green again (61/61)
+
+1/1 guards proven.
+
+FILTERED RUN (--only=definer:is_active_user) — docs/SWEEP_RESULTS.md NOT written.
+That file records total coverage, so only a complete sweep may write it.
+Run `npm run test:sweep` with no filter to regenerate it.
+

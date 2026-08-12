@@ -1,0 +1,206 @@
+
+> client-portal-starter-kit@0.1.0 test:sweep
+> node tests/security/sweep.mjs
+
+
+Guard sweep: 40 guards
+
+Baseline: 61 tests, all passing.
+
+  policy:profiles/select ... 3 test(s) turned red:
+      RED  a deactivated admin loses admin powers, not just the login button
+      RED  client sees only their own profile row
+      RED  client cannot read another client's profile by id
+      restored -> suite green again (61/61)
+  policy:profiles/update ... NOTHING TURNED RED  <-- untested
+      shadowed by the SELECT policy
+      restored -> suite green again (61/61)
+  policy:client_records/select ... 3 test(s) turned red:
+      RED  client A cannot read client B records — unfiltered select returns only their own
+      RED  client A cannot read client B's record by its exact id
+      RED  a deactivated client can still sign in but reads nothing
+      restored -> suite green again (61/61)
+  policy:client_records/insert ... (data drift, resetting) 2 test(s) turned red:
+      RED  client cannot insert a record, even one assigned to themselves
+      RED  client cannot delete their own record
+      restored -> suite green again (61/61)
+  policy:client_records/update ... 1 test(s) turned red:
+      RED  client cannot update their own record
+      restored -> suite green again (61/61)
+  policy:client_records/delete ... (data drift, resetting) 1 test(s) turned red:
+      RED  client cannot delete their own record
+      restored -> suite green again (61/61)
+  policy:attachments/select ... 2 test(s) turned red:
+      RED  client A sees only attachment rows for their own records
+      RED  client A cannot read client B's attachment row by id
+      restored -> suite green again (61/61)
+  policy:attachments/insert ... 1 test(s) turned red:
+      RED  client cannot insert an attachment row pointing at another client's file
+      restored -> suite green again (61/61)
+  policy:attachments/delete ... 1 test(s) turned red:
+      RED  client cannot delete an attachment row
+      restored -> suite green again (61/61)
+  policy:activity_log/select ... 2 test(s) turned red:
+      RED  same query, two identities: client reads zero rows, admin reads all of them
+      RED  a deactivated admin loses admin powers, not just the login button
+      restored -> suite green again (61/61)
+  policy:storage/select ... 3 test(s) turned red:
+      RED  client B cannot download client A's file, even knowing the exact path
+      RED  client B cannot create a signed URL for client A's file
+      RED  client B cannot list client A's folder
+      restored -> suite green again (61/61)
+  policy:storage/insert ... 2 test(s) turned red:
+      RED  client cannot upload into another client's folder
+      RED  client cannot upload into their own folder
+      restored -> suite green again (61/61)
+  policy:storage/update ... NOTHING TURNED RED  <-- untested
+      shadowed by the INSERT policy
+      restored -> suite green again (61/61)
+  policy:storage/delete ... 1 test(s) turned red:
+      RED  client cannot delete their own file
+      restored -> suite green again (61/61)
+  rls:profiles ... (data drift, resetting) 4 test(s) turned red:
+      RED  a deactivated admin loses admin powers, not just the login button
+      RED  client sees only their own profile row
+      RED  client cannot read another client's profile by id
+      RED  client cannot edit another client's profile
+      restored -> suite green again (61/61)
+  rls:client_records ... (data drift, resetting) (reset exit 1, verifying) 8 test(s) turned red:
+      RED  client A cannot read client B records — unfiltered select returns only their own
+      RED  client A cannot read client B's record by its exact id
+      RED  client cannot insert a record, even one assigned to themselves
+      RED  client cannot insert a record assigned to another client
+      RED  client cannot update another client's record
+      RED  client cannot update their own record
+      RED  client cannot delete their own record
+      RED  a deactivated client can still sign in but reads nothing
+      restored -> suite green again (61/61)
+  rls:attachments ... 4 test(s) turned red:
+      RED  client A sees only attachment rows for their own records
+      RED  client A cannot read client B's attachment row by id
+      RED  client cannot insert an attachment row pointing at another client's file
+      RED  client cannot delete an attachment row
+      restored -> suite green again (61/61)
+  rls:activity_log ... 2 test(s) turned red:
+      RED  same query, two identities: client reads zero rows, admin reads all of them
+      RED  a deactivated admin loses admin powers, not just the login button
+      restored -> suite green again (61/61)
+  grant:profiles.role writable ... 1 test(s) turned red:
+      RED  client cannot promote themselves — refused by the column privilege
+      restored -> suite green again (61/61)
+  grant:profiles.is_active writable ... 1 test(s) turned red:
+      RED  client cannot reactivate themselves — refused by the column privilege
+      restored -> suite green again (61/61)
+  grant:profiles insert ... 1 test(s) turned red:
+      RED  client cannot insert a profile row — refused by the missing privilege
+      restored -> suite green again (61/61)
+  grant:profiles delete ... 1 test(s) turned red:
+      RED  client cannot delete their own profile row
+      restored -> suite green again (61/61)
+  grant:activity_log insert ... 1 test(s) turned red:
+      RED  client cannot insert an activity_log entry — refused by the missing privilege
+      restored -> suite green again (61/61)
+  grant:activity_log update ... 1 test(s) turned red:
+      RED  admin cannot update an activity_log entry
+      restored -> suite green again (61/61)
+  grant:activity_log delete ... 1 test(s) turned red:
+      RED  admin cannot delete an activity_log entry
+      restored -> suite green again (61/61)
+  grant:attachments update ... 1 test(s) turned red:
+      RED  client cannot update an attachment row to point at another file
+      restored -> suite green again (61/61)
+  trigger:prevent_role_change ... NOTHING TURNED RED  <-- untested
+      shadowed by the column privilege
+      restored -> suite green again (61/61)
+  definer:set_user_role is_admin check ... 2 test(s) turned red:
+      RED  client calling set_user_role on THEMSELVES is rejected by is_admin()
+      RED  client calling set_user_role on ANOTHER user is rejected by is_admin()
+      restored -> suite green again (61/61)
+  definer:set_user_active is_admin check ... 1 test(s) turned red:
+      RED  client cannot call set_user_active on another user
+      restored -> suite green again (61/61)
+  definer:handle_new_user hardcoded role ... (data drift, resetting) (reset exit 1, verifying) 4 test(s) turned red:
+      RED  a deactivated admin loses admin powers, not just the login button
+      RED  signup metadata cannot set the role
+      RED  admin sees every profile — the same query, the other identity
+      RED  client cannot delete their own profile row
+      restored -> suite green again (61/61)
+  definer:is_admin is_active clause ... 1 test(s) turned red:
+      RED  a deactivated admin loses admin powers, not just the login button
+      restored -> suite green again (61/61)
+  definer:is_active_user ... 1 test(s) turned red:
+      RED  a deactivated client can still sign in but reads nothing
+      restored -> suite green again (61/61)
+  storage:bucket is private ... 2 test(s) turned red:
+      RED  client B cannot download client A's file, even knowing the exact path
+      RED  anonymous callers cannot download a file
+      restored -> suite green again (61/61)
+  combo:role column grant + prevent_role_change trigger ... (data drift, resetting) (reset exit 1, verifying) 15 test(s) turned red:
+      RED  same query, two identities: client reads zero rows, admin reads all of them
+      RED  client A cannot read client B records — unfiltered select returns only their own
+      RED  client A cannot read client B's record by its exact id
+      RED  client cannot insert a record, even one assigned to themselves
+      RED  client cannot insert a record assigned to another client
+      RED  client cannot update their own record
+      RED  client cannot delete their own record
+      RED  client cannot promote themselves — refused by the column privilege
+      RED  client calling set_user_role on THEMSELVES is rejected by is_admin()
+      RED  client calling set_user_role on ANOTHER user is rejected by is_admin()
+      RED  client cannot call set_user_active on another user
+      RED  anonymous callers cannot call set_user_role
+      RED  client sees only their own profile row
+      RED  client cannot read another client's profile by id
+      RED  client cannot edit another client's profile
+      restored -> suite green again (61/61)
+  combo:set_user_role check + prevent_role_change trigger ... (data drift, resetting) (reset exit 1, verifying) 14 test(s) turned red:
+      RED  same query, two identities: client reads zero rows, admin reads all of them
+      RED  client A cannot read client B records — unfiltered select returns only their own
+      RED  client A cannot read client B's record by its exact id
+      RED  client cannot insert a record, even one assigned to themselves
+      RED  client cannot insert a record assigned to another client
+      RED  client cannot update their own record
+      RED  client cannot delete their own record
+      RED  client calling set_user_role on THEMSELVES is rejected by is_admin()
+      RED  client calling set_user_role on ANOTHER user is rejected by is_admin()
+      RED  client cannot call set_user_active on another user
+      RED  anonymous callers cannot call set_user_role
+      RED  client sees only their own profile row
+      RED  client cannot read another client's profile by id
+      RED  client cannot edit another client's profile
+      restored -> suite green again (61/61)
+  combo:storage insert + update policies ... 4 test(s) turned red:
+      RED  client cannot upload into another client's folder
+      RED  client cannot upload into their own folder
+      RED  client cannot overwrite an existing file with upsert
+      RED  client cannot delete their own file
+      restored -> suite green again (61/61)
+  combo:profiles select + update policies ... (data drift, resetting) (reset exit 1, verifying) 4 test(s) turned red:
+      RED  a deactivated admin loses admin powers, not just the login button
+      RED  client sees only their own profile row
+      RED  client cannot read another client's profile by id
+      RED  client cannot edit another client's profile
+      restored -> suite green again (61/61)
+  trigger:client_records audit logging ... (data drift, resetting) (reset exit 1, verifying) 3 test(s) turned red:
+      RED  an admin action writes an audit entry automatically
+      RED  admin reads every record — the same query, the other identity
+      RED  client cannot delete their own record
+      restored -> suite green again (61/61)
+  trigger:attachments audit logging ... 3 test(s) turned red:
+      RED  an attachment upload is attributed to the record owner, and to no one else
+      RED  an attachment deleted directly is attributed to the record owner
+      RED  an attachment removed by a cascading record delete keeps its attribution
+      restored -> suite green again (61/61)
+  storage:bucket file size and MIME limits ... 2 test(s) turned red:
+      RED  an admin cannot upload a file larger than the bucket limit, but can upload a small one
+      RED  an admin cannot upload a MIME type the bucket does not allow, but can upload an allowed one
+      restored -> suite green again (61/61)
+
+37/40 guards proven.
+
+UNTESTED GUARDS (3):
+  - policy:profiles/update: clients could edit anyone's profile
+  - policy:storage/update: clients could overwrite files
+  - trigger:prevent_role_change: the old-vs-new role comparison removed
+
+Written to docs/SWEEP_RESULTS.md
+

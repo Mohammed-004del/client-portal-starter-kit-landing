@@ -7,9 +7,9 @@ import '@fontsource/ibm-plex-sans/latin-400.css'
 import '@fontsource/ibm-plex-sans/latin-500.css'
 import '@fontsource/ibm-plex-sans/latin-600.css'
 import '@fontsource/ibm-plex-sans/latin-700.css'
-import '@fontsource/ibm-plex-sans-arabic/arabic-400.css'
-import '@fontsource/ibm-plex-sans-arabic/arabic-600.css'
 import '@fontsource/ibm-plex-mono/latin-400.css'
+// The Arabic faces are ~88 KB and English is the default, so they are fetched
+// on demand by LocaleProvider rather than on every first paint.
 
 import './index.css'
 import App from './App'

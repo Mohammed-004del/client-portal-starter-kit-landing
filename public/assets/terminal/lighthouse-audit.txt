@@ -1,0 +1,26 @@
+
+> client-portal-starter-kit@0.1.0 audit
+> npm run build && node scripts/audit-lighthouse.mjs
+
+
+> client-portal-starter-kit@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.2.0 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 213 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   1.60 kB │ gzip:  0.84 kB
+dist/assets/index-DlFJ5AmC.css   24.09 kB │ gzip:  5.62 kB
+dist/assets/index-C-QyI1mY.js   206.13 kB │ gzip: 64.27 kB
+dist/assets/App-C0UUr6n9.js     350.21 kB │ gzip: 95.53 kB
+
+[32m✓ built in 1.12s[39m
+
+Lighthouse — production build at http://localhost:4173/login
+
+  performance       98   PASS
+  accessibility    100   PASS
+
+Both categories at or above 90.
+

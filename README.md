@@ -1,32 +1,23 @@
-# React + TypeScript + Vite
+# Client Portal Starter Kit — marketing landing page
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## How to run it
 
-Currently, two official plugins are available:
+Double-click `start.bat`. It installs anything missing and opens the page in your browser.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+To stop the server, close the black window it opened.
 
-## React Compiler
+### Why you can't just open index.html
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This is a Vite + React app. `index.html` is an empty shell — it contains one line
+pointing at `src/main.tsx`, which the browser cannot read. Vite compiles it in
+memory and serves the result. So opening the file directly, or with Live Server,
+gives a blank page every time. That is expected, not a bug.
 
-## Expanding the Oxlint configuration
+### If you prefer the terminal
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+The commands must run in **this** folder (`landing-page`), not the one above it.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+- `npm run dev` — dev server at http://localhost:5173/
+- `npm run build` — production build into `dist/`
+- `npm run preview` — serve the production build (what Lighthouse must be run against)
+- `npm run lint` — oxlint
