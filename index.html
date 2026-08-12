@@ -12,7 +12,11 @@
       content="A client portal in React, TypeScript and Supabase. Per-client isolation is enforced in Postgres and proven by a sweep that breaks each protection on purpose to show a test catches it. 40 guards swept, 37 proven, 3 named."
     />
 
+    <!-- Absolute URLs: crawlers do not resolve relative paths. If the domain
+         changes, these four and the canonical link change with it. -->
+    <link rel="canonical" href="https://client-portal-starter-kit-landing.vercel.app/" />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://client-portal-starter-kit-landing.vercel.app/" />
     <meta property="og:locale" content="en_US" />
     <meta
       property="og:title"
@@ -22,12 +26,19 @@
       property="og:description"
       content="A client portal in React, TypeScript and Supabase. Per-client isolation is enforced in Postgres and proven by a sweep that breaks each protection on purpose to show a test catches it. 40 guards swept, 37 proven, 3 named."
     />
-    <meta property="og:image" content="/assets/video/hero-poster.webp" />
+    <meta
+      property="og:image"
+      content="https://client-portal-starter-kit-landing.vercel.app/assets/video/hero-poster.webp"
+    />
     <meta
       property="og:image:alt"
-      content="Terminal output from the Client Portal Starter Kit guard sweep."
+      content="The client portal in the Client Portal Starter Kit, showing one client's records."
     />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image"
+      content="https://client-portal-starter-kit-landing.vercel.app/assets/video/hero-poster.webp"
+    />
     <meta
       name="twitter:title"
       content="Client Portal Starter Kit — security you can check, not claims you have to trust"

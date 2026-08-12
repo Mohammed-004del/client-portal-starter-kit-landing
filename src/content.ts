@@ -40,9 +40,10 @@ export const META = {
     ar:
       'بوابة عملاء مبنية بـ React و TypeScript و Supabase. عزل بيانات كل عميل مفروض داخل Postgres، ومُثبَت عبر sweep يكسر كل حماية عمدًا ليُظهر أن اختبارًا يكشفها. 40 حماية تم كسرها، 37 مُثبَتة، و3 مذكورة بالاسم.',
   },
+  /** Describes hero-poster.webp, which is the client portal — not the sweep. */
   ogAlt: {
-    en: 'Terminal output from the Client Portal Starter Kit guard sweep.',
-    ar: 'مخرجات الطرفية من الـ guard sweep الخاص بـ Client Portal Starter Kit.',
+    en: "The client portal in the Client Portal Starter Kit, showing one client's records.",
+    ar: 'بوابة العميل في Client Portal Starter Kit، وهي تعرض سجلات عميل واحد.',
   },
 } satisfies Record<string, Copy>
 
