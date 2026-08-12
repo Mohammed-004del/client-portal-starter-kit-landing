@@ -1,7 +1,9 @@
 import { chromium } from 'playwright'
 import { mkdirSync } from 'node:fs'
 
-const URL = 'http://localhost:4174/'
+// Defaults to the local production preview. Set VERIFY_URL to run the same
+// gate against the deployed site.
+const URL = process.env.VERIFY_URL || 'http://localhost:4174/'
 const SHOTS = process.argv[2]
 mkdirSync(SHOTS, { recursive: true })
 
