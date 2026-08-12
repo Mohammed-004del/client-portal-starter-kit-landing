@@ -4,6 +4,27 @@ import { CONTACT, OFFER, type CopyPair } from './content'
 import { useLocale } from './locale-context'
 
 /**
+ * Scroll-reveal wrapper. Renders visible; `src/motion.ts` hides it only when
+ * the reader has not asked for reduced motion. Never give this opacity:0 in
+ * CSS — that is how scroll-reveal pages end up permanently blank.
+ */
+export function Reveal({
+  children,
+  className,
+  as: Tag = 'div',
+}: {
+  children: ReactNode
+  className?: string
+  as?: 'div' | 'li' | 'section'
+}) {
+  return (
+    <Tag data-reveal className={className}>
+      {children}
+    </Tag>
+  )
+}
+
+/**
  * The buy button and the guarantee, welded together in one component.
  * Every body section renders this exactly once, so the pair cannot drift
  * apart as sections are edited.
@@ -12,22 +33,41 @@ export function CtaBlock({ id }: { id?: string }) {
   const { t } = useLocale()
 
   return (
-    <div className="mt-10 border-t border-line pt-8">
+    <div className="mt-12 border-t border-line pt-8">
       <a
         id={id}
         href={CHECKOUT_URL}
         aria-label={t(OFFER.buyAria)}
-        className="inline-flex items-center justify-center rounded-md bg-accent px-6 py-3 text-base font-semibold text-accent-ink transition-colors hover:bg-fg focus-visible:bg-fg"
+        className="btn-primary inline-flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 text-base font-semibold"
       >
         {t(OFFER.buy)}
+        <Arrow />
       </a>
-      <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted" data-guarantee>
+      <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted" data-guarantee>
         {t(OFFER.guarantee)}
       </p>
       {CHECKOUT_IS_PLACEHOLDER && (
         <p className="mt-2 text-xs text-faint">{t(OFFER.checkoutPlaceholderNote)}</p>
       )}
     </div>
+  )
+}
+
+/** Direction-aware: the arrow points the way the text runs. */
+export function Arrow() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className="size-4 shrink-0 rtl:-scale-x-100"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2.5 8h11M9 3.5 13.5 8 9 12.5" />
+    </svg>
   )
 }
 
@@ -44,12 +84,17 @@ export function Section({
     <section
       id={id}
       data-section
-      className="border-t border-line px-5 py-20 sm:px-8 md:py-28"
+      className="relative border-t border-line px-5 py-20 sm:px-8 md:py-28"
       aria-labelledby={`${id}-heading`}
     >
       <div className="mx-auto max-w-5xl">
         {eyebrow && (
-          <p className="mb-4 font-mono text-xs uppercase tracking-[0.2em] text-accent">{eyebrow}</p>
+          <Reveal>
+            <p className="mb-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-accent">
+              <span aria-hidden="true" className="inline-block h-px w-6 bg-accent/60" />
+              {eyebrow}
+            </p>
+          </Reveal>
         )}
         {children}
       </div>
@@ -71,19 +116,26 @@ export function Terminal({
   note?: string
 }) {
   return (
-    <figure className="my-8">
-      <figcaption className="flex flex-wrap items-center gap-2 rounded-t-md border border-line bg-raised px-4 py-2.5">
-        <span
-          aria-hidden="true"
-          className="inline-block size-2 shrink-0 rounded-full bg-accent"
-        />
-        <span className="font-mono text-xs text-muted">{label}</span>
-      </figcaption>
-      <pre className="verbatim overflow-x-auto rounded-b-md border border-t-0 border-line bg-surface px-4 py-5 text-[0.8125rem] leading-relaxed text-fg">
-        <code>{body}</code>
-      </pre>
-      {note && <p className="mt-2 font-mono text-xs text-faint">{note}</p>}
-    </figure>
+    <Reveal>
+      <figure className="my-10">
+        <div className="glow-frame">
+          <div className="overflow-hidden bg-surface">
+            <figcaption className="flex flex-wrap items-center gap-3 border-b border-line bg-raised px-4 py-3">
+              <span aria-hidden="true" className="flex shrink-0 gap-1.5">
+                <span className="inline-block size-2.5 rounded-full bg-fail/80" />
+                <span className="inline-block size-2.5 rounded-full bg-accent/70" />
+                <span className="inline-block size-2.5 rounded-full bg-pass/80" />
+              </span>
+              <span className="font-mono text-xs text-muted">{label}</span>
+            </figcaption>
+            <pre className="verbatim overflow-x-auto px-4 py-5 text-[0.8125rem] leading-relaxed text-fg">
+              <code>{body}</code>
+            </pre>
+          </div>
+        </div>
+        {note && <p className="mt-3 font-mono text-xs text-faint">{note}</p>}
+      </figure>
+    </Reveal>
   )
 }
 
@@ -91,7 +143,9 @@ export function Prose({ paragraphs }: { paragraphs: readonly string[] }) {
   return (
     <div className="mt-6 space-y-5 text-base leading-relaxed text-muted md:text-lg">
       {paragraphs.map((p) => (
-        <p key={p.slice(0, 48)}>{p}</p>
+        <Reveal key={p.slice(0, 48)} as="div">
+          <p>{p}</p>
+        </Reveal>
       ))}
     </div>
   )
@@ -100,30 +154,43 @@ export function Prose({ paragraphs }: { paragraphs: readonly string[] }) {
 /** A closing line set off by a rule — the sentence a section is arguing toward. */
 export function Closing({ children }: { children: ReactNode }) {
   return (
-    <p className="mt-10 max-w-3xl border-s-2 border-accent ps-5 text-base font-medium leading-relaxed text-fg md:text-lg">
-      {children}
-    </p>
+    <Reveal>
+      <p className="glass mt-12 max-w-3xl rounded-2xl border-s-2 border-s-accent p-6 text-base font-medium leading-relaxed text-fg md:text-lg">
+        {children}
+      </p>
+    </Reveal>
   )
 }
 
 /**
- * Term-and-explanation list. `mono` renders the term in monospace, for the
- * places where the term is a literal identifier from the schema.
+ * Term-and-explanation list, rendered as the reference's card grid. `mono`
+ * renders the term in monospace, for the places where it is a literal
+ * identifier from the schema.
  */
-export function DefList({ items, mono }: { items: readonly CopyPair[]; mono?: boolean }) {
+export function DefList({
+  items,
+  mono,
+  columns = 1,
+}: {
+  items: readonly CopyPair[]
+  mono?: boolean
+  columns?: 1 | 2
+}) {
   const { t } = useLocale()
 
   return (
-    <dl className="mt-8 grid gap-px overflow-hidden rounded-lg border border-line bg-line">
+    // A <dl> may contain `div > dt + dd`, but not a second nested div — the
+    // reveal wrapper and the card must therefore be the same element.
+    <dl className={`mt-8 grid gap-4 ${columns === 2 ? 'sm:grid-cols-2' : ''}`}>
       {items.map((item) => (
-        <div key={item.term.en} className="bg-bg p-5 sm:p-6 md:grid md:grid-cols-[14rem_1fr] md:gap-6">
+        <div key={item.term.en} data-reveal className="glass card-lift h-full rounded-2xl p-6">
           <dt
-            className={`font-semibold text-fg ${mono ? 'font-mono text-sm' : 'text-base'}`}
+            className={`font-semibold text-fg ${mono ? 'font-mono text-sm text-accent' : 'text-base'}`}
             dir={mono ? 'ltr' : undefined}
           >
             {t(item.term)}
           </dt>
-          <dd className="mt-2 text-base leading-relaxed text-muted md:mt-0">{t(item.desc)}</dd>
+          <dd className="mt-3 text-base leading-relaxed text-muted">{t(item.desc)}</dd>
         </div>
       ))}
     </dl>
@@ -152,18 +219,24 @@ export function Shot({
   eager?: boolean
 }) {
   return (
-    <figure>
-      <img
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        loading={eager ? 'eager' : 'lazy'}
-        decoding="async"
-        className="h-auto w-full rounded-lg border border-line bg-surface"
-      />
-      {caption && <figcaption className="mt-3 text-sm leading-relaxed text-faint">{caption}</figcaption>}
-    </figure>
+    <Reveal>
+      <figure>
+        <div className="card-lift overflow-hidden rounded-2xl border border-line bg-surface">
+          <img
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            loading={eager ? 'eager' : 'lazy'}
+            decoding="async"
+            className="h-auto w-full"
+          />
+        </div>
+        {caption && (
+          <figcaption className="mt-3 text-sm leading-relaxed text-faint">{caption}</figcaption>
+        )}
+      </figure>
+    </Reveal>
   )
 }
 
@@ -176,20 +249,22 @@ export function Contact() {
   const { t } = useLocale()
 
   return (
-    <div className="rounded-lg border border-line bg-surface p-6 sm:p-8">
-      <h3 className="text-lg font-semibold text-fg">{t(CONTACT.heading)}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted">{t(CONTACT.body)}</p>
-      {/* break-all: the address is one unbreakable token and overflows a
-          320px viewport without it. */}
-      <a
-        href={`mailto:${CONTACT_EMAIL}`}
-        dir="ltr"
-        aria-label={`${t(CONTACT.ariaPrefix)} ${CONTACT_EMAIL}`}
-        className="mt-5 inline-block max-w-full break-all font-mono text-base text-fg underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-accent"
-      >
-        {CONTACT_EMAIL}
-      </a>
-    </div>
+    <Reveal>
+      <div className="glass rounded-2xl p-6 sm:p-8">
+        <h3 className="text-lg font-semibold text-fg">{t(CONTACT.heading)}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{t(CONTACT.body)}</p>
+        {/* break-all: the address is one unbreakable token and overflows a
+            320px viewport without it. */}
+        <a
+          href={`mailto:${CONTACT_EMAIL}`}
+          dir="ltr"
+          aria-label={`${t(CONTACT.ariaPrefix)} ${CONTACT_EMAIL}`}
+          className="mt-5 inline-block max-w-full break-all font-mono text-base text-accent underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-accent"
+        >
+          {CONTACT_EMAIL}
+        </a>
+      </div>
+    </Reveal>
   )
 }
 
@@ -198,26 +273,22 @@ export function Faq({ items }: { items: readonly CopyPair[] }) {
   const { t } = useLocale()
 
   return (
-    <div className="mt-8 divide-y divide-line border-y border-line">
+    <div className="mt-8 grid gap-3">
       {items.map((item) => (
-        <details key={item.term.en} className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-4 py-5 text-base font-semibold text-fg marker:content-none">
-            <span className="flex-1">{t(item.term)}</span>
-            <span
-              aria-hidden="true"
-              className="shrink-0 font-mono text-lg text-accent group-open:hidden"
-            >
-              +
-            </span>
-            <span
-              aria-hidden="true"
-              className="hidden shrink-0 font-mono text-lg text-accent group-open:inline"
-            >
-              −
-            </span>
-          </summary>
-          <p className="pb-6 text-base leading-relaxed text-muted">{t(item.desc)}</p>
-        </details>
+        <Reveal key={item.term.en}>
+          <details className="glass group rounded-2xl px-5 open:border-line-strong sm:px-6">
+            <summary className="flex cursor-pointer list-none items-center gap-4 py-5 text-base font-semibold text-fg marker:content-none">
+              <span className="flex-1">{t(item.term)}</span>
+              <span
+                aria-hidden="true"
+                className="grid size-7 shrink-0 place-items-center rounded-full border border-line-strong font-mono text-base text-accent transition-transform duration-300 group-open:rotate-45"
+              >
+                +
+              </span>
+            </summary>
+            <p className="pb-6 text-base leading-relaxed text-muted">{t(item.desc)}</p>
+          </details>
+        </Reveal>
       ))}
     </div>
   )

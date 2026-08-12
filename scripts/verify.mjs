@@ -1,5 +1,6 @@
 import { chromium } from 'playwright'
 import { mkdirSync } from 'node:fs'
+import { execSync } from 'node:child_process'
 
 // Defaults to the local production preview. Set VERIFY_URL to run the same
 // gate against the deployed site.
@@ -11,6 +12,13 @@ const results = []
 const ok = (name, pass, detail = '') => {
   results.push({ name, pass, detail })
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${name}${detail ? ' — ' + detail : ''}`)
+}
+
+// The redesign is visual only. This is the machine check that no copy moved:
+// src/content.ts must be byte-identical to HEAD.
+if (!process.env.VERIFY_URL) {
+  const diff = execSync('git diff --stat -- src/content.ts', { encoding: 'utf8' }).trim()
+  ok('src/content.ts unchanged — redesign touched no copy', diff === '', diff.slice(0, 120))
 }
 
 const browser = await chromium.launch()
@@ -279,7 +287,53 @@ const scrollBehavior = await rmPage.evaluate(
   () => getComputedStyle(document.documentElement).scrollBehavior,
 )
 ok('prefers-reduced-motion disables smooth scroll', scrollBehavior === 'auto', scrollBehavior)
+
+// The scroll-reveal failure mode: elements hidden for animation and never
+// revealed, leaving a blank sales page. Under reduced motion nothing should
+// ever have been hidden in the first place.
+await rmPage.evaluate(async () => {
+  for (let y = 0; y < document.documentElement.scrollHeight; y += 600) {
+    window.scrollTo(0, y)
+    await new Promise((r) => setTimeout(r, 40))
+  }
+  window.scrollTo(0, 0)
+})
+await rmPage.waitForTimeout(600)
+const hidden = await rmPage.evaluate(() =>
+  [...document.querySelectorAll('[data-reveal], [data-hero], [data-hero-frame]')]
+    .filter((el) => {
+      const s = getComputedStyle(el)
+      return Number(s.opacity) < 0.99 || s.visibility === 'hidden' || el.offsetHeight === 0
+    })
+    .map((el) => `${el.tagName}.${(el.className || '').toString().slice(0, 30)}`),
+)
+const revealCount = await rmPage.locator('[data-reveal], [data-hero]').count()
+ok(
+  'reduced motion leaves no animated element invisible',
+  hidden.length === 0 && revealCount > 0,
+  `${revealCount} animated elements, ${hidden.length} invisible ${hidden.slice(0, 4).join(' | ')}`,
+)
 await rm.close()
+
+// With motion enabled, everything must still end up visible after scrolling —
+// a reveal that never fires is the same blank page by another route.
+const mo = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+const moPage = await mo.newPage()
+await moPage.goto(URL, { waitUntil: 'domcontentloaded' })
+await moPage.evaluate(async () => {
+  for (let y = 0; y < document.documentElement.scrollHeight; y += 400) {
+    window.scrollTo(0, y)
+    await new Promise((r) => setTimeout(r, 60))
+  }
+})
+await moPage.waitForTimeout(3000)
+const stillHidden = await moPage.evaluate(() =>
+  [...document.querySelectorAll('[data-reveal], [data-hero]')].filter(
+    (el) => Number(getComputedStyle(el).opacity) < 0.99,
+  ).length,
+)
+ok('every reveal has fired after scrolling the page', stillHidden === 0, `${stillHidden} still hidden`)
+await mo.close()
 
 // --------------------------------------------------------------- console
 ok('zero console errors/warnings', noise.length === 0, noise.slice(0, 6).join(' | '))
