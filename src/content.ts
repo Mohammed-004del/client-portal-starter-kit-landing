@@ -851,6 +851,24 @@ export const CONTACT = {
   ariaPrefix: { en: 'Email', ar: 'راسل' },
 } satisfies Record<string, Copy>
 
+export const SIGNUP = {
+  heading: { en: 'Or leave an address', ar: 'أو اترك بريدك' },
+  body: {
+    en: 'One line when the sweep results change or the template does. No sequence, no newsletter, and it is one click to stop.',
+    ar: 'سطر واحد حين تتغيّر نتائج الـ sweep أو يتغيّر القالب. لا سلسلة رسائل ولا نشرة بريدية، وإيقافه بنقرة واحدة.',
+  },
+  label: { en: 'Email address', ar: 'البريد الإلكتروني' },
+  placeholder: { en: 'you@example.com', ar: 'you@example.com' },
+  submit: { en: 'Add me', ar: 'أضِفني' },
+  sending: { en: 'Sending…', ar: 'جارٍ الإرسال…' },
+  ok: { en: 'Saved. That is the only thing stored.', ar: 'تم الحفظ. وهذا كل ما يُخزَّن.' },
+  invalid: { en: 'That address does not look right.', ar: 'هذا البريد لا يبدو صحيحًا.' },
+  failed: {
+    en: 'That did not send, and nothing was stored. Try again, or email me directly above.',
+    ar: 'لم يُرسَل، ولم يُحفَظ شيء. أعد المحاولة، أو راسلني مباشرة بالأعلى.',
+  },
+} satisfies Record<string, Copy>
+
 export const FOOTER = {
   note: {
     en: 'Every number on this page comes from a run that completed, in a file named beside it.',
@@ -880,8 +898,8 @@ export const FOOTER = {
     {
       term: { en: 'Privacy', ar: 'الخصوصية' },
       desc: {
-        en: 'This page sets no cookies, loads nothing from any third party, and stores exactly one thing in your browser: which language you chose. Nothing is sent anywhere. Payment and billing data are handled by Lemon Squeezy under their own privacy policy.',
-        ar: 'هذه الصفحة لا تضع أي كوكيز، ولا تُحمّل شيئًا من أي طرف ثالث، وتخزّن في متصفحك شيئًا واحدًا فقط: اللغة التي اخترتها. ولا يُرسَل أي شيء إلى أي مكان. أما بيانات الدفع والفوترة فتتولاها Lemon Squeezy وفق سياسة الخصوصية الخاصة بها.',
+        en: 'This page sets no cookies, runs no analytics, and stores exactly one thing in your browser: which language you chose. Nothing is sent anywhere unless you type an address into the form below and submit it — that address goes to my own database and is stored on its own, with no name, no IP and nothing else attached. Payment and billing data are handled by Lemon Squeezy under their own privacy policy.',
+        ar: 'هذه الصفحة لا تضع أي كوكيز، ولا تُشغّل أي تحليلات، وتخزّن في متصفحك شيئًا واحدًا فقط: اللغة التي اخترتها. ولا يُرسَل أي شيء إلى أي مكان إلا إذا كتبت بريدك في النموذج بالأسفل وأرسلته — عندها يذهب البريد إلى قاعدة بياناتي أنا، ويُحفَظ وحده، بلا اسم ولا عنوان IP ولا أي شيء آخر. أما بيانات الدفع والفوترة فتتولاها Lemon Squeezy وفق سياسة الخصوصية الخاصة بها.',
       },
     },
   ],

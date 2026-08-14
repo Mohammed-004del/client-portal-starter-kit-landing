@@ -1,6 +1,12 @@
-import type { ReactNode } from 'react'
-import { CHECKOUT_IS_PLACEHOLDER, CHECKOUT_URL, CONTACT_EMAIL } from './config'
-import { CONTACT, OFFER, type CopyPair } from './content'
+import { useState, type FormEvent, type ReactNode } from 'react'
+import {
+  CHECKOUT_IS_PLACEHOLDER,
+  CHECKOUT_URL,
+  CONTACT_EMAIL,
+  LEAD_ENDPOINT,
+  LEAD_HEADERS,
+} from './config'
+import { CONTACT, OFFER, SIGNUP, type CopyPair } from './content'
 import { useLocale } from './locale-context'
 
 /**
@@ -241,9 +247,8 @@ export function Shot({
 }
 
 /**
- * Subordinate to the buy button: below the fold, no interruption. A mailto
- * rather than a form — there is no backend here, and a hosted form service
- * would be the only third-party request on the whole page.
+ * Direct line to a human, kept above the signup form: someone with a real
+ * question should not be funnelled into a mailing list instead of an answer.
  */
 export function Contact() {
   const { t } = useLocale()
@@ -265,6 +270,91 @@ export function Contact() {
         </a>
       </div>
     </Reveal>
+  )
+}
+
+/**
+ * Email capture. Subordinate to the buy button by construction: it sits in the
+ * footer, below the contact block, and never interrupts.
+ *
+ * It calls one Postgres function and reports exactly what happened. There is no
+ * silent success path — a failed request says so and says nothing was stored,
+ * because a form that swallows an address is worse than no form.
+ */
+export function SignupForm() {
+  const { t } = useLocale()
+  const [state, setState] = useState<'idle' | 'sending' | 'ok' | 'invalid' | 'failed'>('idle')
+  const [email, setEmail] = useState('')
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const value = email.trim()
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)) {
+      setState('invalid')
+      return
+    }
+
+    setState('sending')
+    try {
+      const response = await fetch(LEAD_ENDPOINT, {
+        method: 'POST',
+        headers: LEAD_HEADERS,
+        body: JSON.stringify({ lead_email: value }),
+      })
+      if (!response.ok) throw new Error(String(response.status))
+      setState('ok')
+      setEmail('')
+    } catch {
+      setState('failed')
+    }
+  }
+
+  return (
+    <div className="glass mt-4 rounded-2xl p-6 sm:p-8">
+      <h3 className="text-lg font-semibold text-fg">{t(SIGNUP.heading)}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t(SIGNUP.body)}</p>
+
+      {/* noValidate on purpose: the browser's own validation bubble speaks the
+          browser's language, not the page's, so an Arabic reader would get an
+          English tooltip. Validating here keeps the message bilingual. */}
+      <form noValidate onSubmit={onSubmit} className="mt-5 flex flex-wrap items-end gap-3">
+        <div className="min-w-0 flex-1">
+          <label htmlFor="lead-email" className="block text-xs font-medium text-faint">
+            {t(SIGNUP.label)}
+          </label>
+          <input
+            id="lead-email"
+            name="email"
+            type="email"
+            required
+            dir="ltr"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              if (state !== 'sending') setState('idle')
+            }}
+            disabled={state === 'sending'}
+            placeholder={t(SIGNUP.placeholder)}
+            className="mt-1.5 w-full rounded-xl border border-line bg-bg px-4 py-3 text-base text-fg placeholder:text-faint disabled:opacity-50"
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={state === 'sending'}
+          className="btn-ghost rounded-xl px-6 py-3 text-sm font-semibold text-fg disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {t(state === 'sending' ? SIGNUP.sending : SIGNUP.submit)}
+        </button>
+      </form>
+
+      {/* aria-live so the outcome is announced, not only painted. */}
+      <p aria-live="polite" className="mt-3 min-h-5 text-sm">
+        {state === 'ok' && <span className="text-pass">{t(SIGNUP.ok)}</span>}
+        {state === 'invalid' && <span className="text-fail">{t(SIGNUP.invalid)}</span>}
+        {state === 'failed' && <span className="text-fail">{t(SIGNUP.failed)}</span>}
+      </p>
+    </div>
   )
 }
 

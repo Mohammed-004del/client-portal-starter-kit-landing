@@ -20,11 +20,35 @@ export const CHECKOUT_URL =
 export const CHECKOUT_IS_PLACEHOLDER = CHECKOUT_URL.includes('PLACEHOLDER')
 
 /**
- * The only way to reach a human here. A mailto: rather than a form service:
- * this page has no backend by design, and a third-party form would be the one
- * external dependency on an otherwise entirely self-hosted page.
+ * The only way to reach a human here.
  */
 export const CONTACT_EMAIL = 'mohammedmahmoodhamed004@gmail.com'
+
+/**
+ * Email capture, pointed at one Postgres function and nothing else.
+ *
+ * This is the seller's own Supabase project — not a third-party form service —
+ * and the table lives in a `marketing` schema so the product's migrations,
+ * which rebuild `public`, can never drop it.
+ *
+ * The key below is a **publishable** key. It is designed to be shipped in a
+ * browser bundle and is not a secret: it grants exactly one privilege here,
+ * EXECUTE on public.capture_lead. The schema holding the addresses is not
+ * exposed to the API at all, so this key cannot read a single stored address,
+ * and every product table is behind row-level security besides.
+ *
+ * A plain fetch rather than @supabase/supabase-js: one POST does not justify
+ * ~30KB of client library.
+ */
+const SUPABASE_URL = 'https://kxiugikgjsoyybtlkepu.supabase.co'
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_v47ADYYCkn4l30jhyURgWw_f8Ina1ly'
+
+export const LEAD_ENDPOINT = `${SUPABASE_URL}/rest/v1/rpc/capture_lead`
+export const LEAD_HEADERS = {
+  apikey: SUPABASE_PUBLISHABLE_KEY,
+  Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+  'Content-Type': 'application/json',
+}
 
 /** Asset paths, copied one-way out of demo-assets/ at build time. */
 export const ASSETS = {

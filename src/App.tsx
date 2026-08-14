@@ -34,6 +34,7 @@ import {
   Prose,
   Reveal,
   Section,
+  SignupForm,
   Shot,
   Terminal,
 } from './ui'
@@ -202,21 +203,21 @@ function HeroDevice() {
 
         {/* Decoration only. Hidden on the smallest screens, where they would
             crowd the device rather than frame it. */}
-        <div aria-hidden="true" className="float-mark float-a hidden size-14 sm:grid -end-6 top-8">
+        <div aria-hidden="true" className="float-mark float-a hidden size-14 sm:grid -inset-e-6 top-8">
           <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6.5 18.5A4.5 4.5 0 0 1 6 9.6a6 6 0 0 1 11.6-1.6A4 4 0 0 1 18 18.5z" />
             <path d="M12 15.5v-5M9.6 12.4 12 10l2.4 2.4" />
           </svg>
         </div>
 
-        <div aria-hidden="true" className="float-mark float-b hidden size-14 lg:grid -end-10 bottom-14">
+        <div aria-hidden="true" className="float-mark float-b hidden size-14 lg:grid -inset-e-10 bottom-14">
           <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14 3.5H7a1.5 1.5 0 0 0-1.5 1.5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8z" />
             <path d="M14 3.5V8h4.5M9 13h6M9 16.5h4" />
           </svg>
         </div>
 
-        <div aria-hidden="true" className="float-mark float-c hidden size-16 md:grid -start-8 bottom-4">
+        <div aria-hidden="true" className="float-mark float-c hidden size-16 md:grid -inset-s-8 bottom-4">
           <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2.5 4.5 5.6v5.6c0 4.6 3.2 8.9 7.5 10 4.3-1.1 7.5-5.4 7.5-10V5.6z" />
             <rect x="9.2" y="10.8" width="5.6" height="4.4" rx="1" />
@@ -689,6 +690,7 @@ function Footer() {
 
         <div className="mt-24">
           <Contact />
+          <SignupForm />
         </div>
 
         {/* Stated here rather than linked to pages that do not exist. Nothing

@@ -1,6 +1,6 @@
 import { chromium } from 'playwright'
 import { mkdirSync } from 'node:fs'
-import { execSync } from 'node:child_process'
+
 
 // Defaults to the local production preview. Set VERIFY_URL to run the same
 // gate against the deployed site.
@@ -14,12 +14,10 @@ const ok = (name, pass, detail = '') => {
   console.log(`${pass ? 'PASS' : 'FAIL'}  ${name}${detail ? ' — ' + detail : ''}`)
 }
 
-// The redesign is visual only. This is the machine check that no copy moved:
-// src/content.ts must be byte-identical to HEAD.
-if (!process.env.VERIFY_URL) {
-  const diff = execSync('git diff --stat -- src/content.ts', { encoding: 'utf8' }).trim()
-  ok('src/content.ts unchanged — redesign touched no copy', diff === '', diff.slice(0, 120))
-}
+// The "src/content.ts unchanged" guard lived here for the redesign, whose whole
+// contract was that it must not touch a word of copy. That work is finished and
+// committed, and the signup form legitimately needs its own strings, so the
+// guard has served its purpose and been removed rather than left to fail.
 
 const browser = await chromium.launch()
 
@@ -202,7 +200,20 @@ ok(
     mailto.href === `mailto:${mailto.text}`,
   mailto ? `${mailto.href} / shows "${mailto.text}"` : 'no mailto link found',
 )
-ok('no form remains on the page', (await page.locator('form').count()) === 0)
+// The signup form must reject a bad address in the browser and say so, without
+// touching the network. Deliberately not submitting a valid address here: the
+// gate runs often and would otherwise write a row into the real table each time.
+const signup = page.locator('form').first()
+ok('signup form is present', (await page.locator('form').count()) === 1)
+await signup.locator('input[type="email"]').fill('not-an-address')
+await signup.locator('button[type="submit"]').click()
+await page.waitForTimeout(400)
+const liveRegion = (await signup.locator('~ p[aria-live]').first().textContent().catch(() => '')) ?? ''
+ok(
+  'signup form rejects a malformed address and says so',
+  liveRegion.trim().length > 0,
+  `notice="${liveRegion.trim().slice(0, 60)}"`,
+)
 
 // Placeholder policy links must not be dead anchors.
 const deadFooterLinks = await page.evaluate(() =>
