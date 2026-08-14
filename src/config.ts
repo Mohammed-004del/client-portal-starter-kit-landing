@@ -6,10 +6,15 @@
 export const PRICE_USD = 129
 
 /**
- * PLACEHOLDER — not a working checkout.
- * Replace with the real Lemon Squeezy checkout URL before launch.
+ * Live Lemon Squeezy checkout. Verified out of test mode before being put here:
+ * the page reports test_mode false on both product and cart, shows no test-mode
+ * banner, offers real payment methods, and its subtotal is 12900 — $129.00.
+ *
+ * The test-mode variant had a different id, so this URL is not interchangeable
+ * with the earlier one.
  */
-export const CHECKOUT_URL = 'https://PLACEHOLDER.lemonsqueezy.com/checkout/buy/REPLACE-ME'
+export const CHECKOUT_URL =
+  'https://client-portal-starter-kit.lemonsqueezy.com/checkout/buy/c4ae2215-105f-4f79-82a3-8200235f987f'
 
 /** True while CHECKOUT_URL is still the placeholder, so the UI can say so instead of pretending. */
 export const CHECKOUT_IS_PLACEHOLDER = CHECKOUT_URL.includes('PLACEHOLDER')
