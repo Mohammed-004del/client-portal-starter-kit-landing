@@ -59,6 +59,10 @@ export const NAV = {
     { href: '#setup', label: { en: 'How you use it', ar: 'طريقة الاستخدام' } },
     { href: '#limits', label: { en: 'Limits', ar: 'الحدود' } },
     { href: '#pricing', label: { en: 'Pricing', ar: 'السعر' } },
+    // A different page, not an anchor. Last on purpose: it is the exit for
+    // someone who is not buying today, and it must not outrank the sections
+    // that answer why they would.
+    { href: '/guide', label: { en: 'Free guide', ar: 'دليل مجاني' } },
   ],
 } as const
 
@@ -75,6 +79,15 @@ export const OFFER = {
     ar: `اشترِ الآن — ${PRICE_USD} دولارًا. Client Portal Starter Kit، دفعة واحدة.`,
   },
   watch: { en: 'Watch the walkthrough', ar: 'شاهد الجولة الكاملة' },
+  /**
+   * A guarantee nobody can name is a guarantee nobody repeats. This is the
+   * handle for the promise below it, and it is rendered by the same component,
+   * so the name can never end up attached to different terms than these.
+   */
+  guaranteeName: {
+    en: 'The Broken-Guard Guarantee',
+    ar: 'ضمان الحماية المكسورة',
+  },
   /**
    * Rendered under every single buy button. Written once, on purpose — the
    * button and the promise must not be able to drift apart.
@@ -214,6 +227,13 @@ UNTESTED GUARDS (3):
 
 /** A labelled item in a list — a table and what it answers, a step, a question. */
 export type CopyPair = { readonly term: Copy; readonly desc: Copy }
+
+/**
+ * A number that was counted, with what it was counted from. Deliberately not
+ * general-purpose: there is no field here for a unit of time, because nothing
+ * on this page is allowed to estimate how long anything would have taken.
+ */
+export type Counted = { readonly n: string; readonly label: Copy; readonly note: Copy }
 
 /** A captured PNG, with its real pixel dimensions. */
 export type Screenshot = {
@@ -416,8 +436,8 @@ export const INCLUDED = {
     {
       term: { en: 'Documentation', ar: 'التوثيق' },
       desc: {
-        en: 'SECURITY.md — threat model, guarantees and limits. SWEEP_RESULTS.md — which protections are proven and which are not. EVIDENCE.md — what each phase demonstrated, with the numbers. LEARNING_NOTES.md — how it works, and answers you can forward to your own client.',
-        ar: 'ملف SECURITY.md — نموذج التهديد والضمانات والحدود. وSWEEP_RESULTS.md — أي الحمايات مُثبَتة وأيها ليست كذلك. وEVIDENCE.md — ما أثبتته كل مرحلة، بالأرقام. وLEARNING_NOTES.md — كيف يعمل، وإجابات يمكنك إرسالها إلى عميلك.',
+        en: 'SECURITY.md — threat model, guarantees and limits. SWEEP_RESULTS.md — which protections are proven and which are not. EVIDENCE.md — what each phase demonstrated, with the numbers. DEPLOYMENT.md — going live, including the exact SQL for promoting your first admin. LEARNING_NOTES.md — how it works, and answers you can forward to your own client.',
+        ar: 'ملف SECURITY.md — نموذج التهديد والضمانات والحدود. وSWEEP_RESULTS.md — أي الحمايات مُثبَتة وأيها ليست كذلك. وEVIDENCE.md — ما أثبتته كل مرحلة، بالأرقام. وDEPLOYMENT.md — النشر للإنتاج، ومعه أمر SQL المحدد لترقية أول مشرف. وLEARNING_NOTES.md — كيف يعمل، وإجابات يمكنك إرسالها إلى عميلك.',
       },
     },
   ],
@@ -692,9 +712,53 @@ export const PRICING = {
   includes: [
     { en: 'The full source: application, 8 migrations, Edge Function, and the theme file you rebrand from.', ar: 'الكود المصدري كاملًا: التطبيق، و8 ملفات migration، ودالة Edge، وملف الثيم الذي تعيد منه العلامة التجارية.' },
     { en: '61 security tests, 9 browser smoke tests, and the guard sweep you can run yourself.', ar: '61 اختبار أمان، و9 اختبارات متصفح سريعة، والـ guard sweep الذي تستطيع تشغيله بنفسك.' },
-    { en: 'Four documents: threat model and limits, sweep results, evidence log, and implementation notes.', ar: 'أربع وثائق: نموذج التهديد والحدود، ونتائج الـ sweep، وسجل الأدلة، وملاحظات التنفيذ.' },
+    { en: 'Five documents: threat model and limits, sweep results, evidence log, deployment, and implementation notes.', ar: 'خمس وثائق: نموذج التهديد والحدود، ونتائج الـ sweep، وسجل الأدلة، والنشر، وملاحظات التنفيذ.' },
     { en: 'A perpetual licence for one application — yours or a client\'s. Modify it freely and keep it closed-source.', ar: 'رخصة دائمة لتطبيق واحد — لك أو لعميلك. عدّله كما تشاء وأبقِه مغلق المصدر.' },
   ],
+
+  /**
+   * The value stack, built only from things that were counted. The marketing
+   * pattern this replaces stacks estimated hours against the price; that is
+   * forbidden here, because the hours are not mine to estimate — so the stack
+   * is made of countable artefacts instead, each with the file it came from.
+   */
+  countsHeading: { en: 'What the number is buying', ar: 'ما الذي يشتريه هذا الرقم' },
+  counts: [
+    {
+      n: '4',
+      label: { en: 'tables', ar: 'جداول' },
+      note: { en: 'profiles, client_records, attachments, activity_log', ar: 'profiles و client_records و attachments و activity_log' },
+    },
+    {
+      n: '8',
+      label: { en: 'migrations', ar: 'ملفات migration' },
+      note: { en: '1,324 lines of SQL, counted in supabase/migrations', ar: '1,324 سطر SQL، معدودة في supabase/migrations' },
+    },
+    {
+      n: '61',
+      label: { en: 'security tests', ar: 'اختبار أمان' },
+      note: { en: 'across 7 files — terminal/test-security.txt', ar: 'موزّعة على 7 ملفات — terminal/test-security.txt' },
+    },
+    {
+      n: '9',
+      label: { en: 'browser smoke tests', ar: 'اختبار متصفح سريع' },
+      note: { en: 'Playwright, in 3 spec files', ar: 'بـ Playwright، في 3 ملفات' },
+    },
+    {
+      n: '40',
+      label: { en: 'guards swept', ar: 'حماية مكسورة عمدًا' },
+      note: { en: '37 proven, 3 named — terminal/full-sweep.txt', ar: '37 مُثبَتة، و3 مذكورة بالاسم — terminal/full-sweep.txt' },
+    },
+    {
+      n: '5',
+      label: { en: 'documents', ar: 'وثائق' },
+      note: { en: 'threat model, sweep results, evidence, deployment, notes', ar: 'نموذج التهديد، نتائج الـ sweep، الأدلة، النشر، الملاحظات' },
+    },
+  ],
+  countsNote: {
+    en: 'Every figure above was counted in the repository or read off a run that completed, and the file is named beside it. There is no estimate here of hours saved or money made, because those are numbers about your work, not mine, and I have no way to measure them.',
+    ar: 'كل رقم بالأعلى إما معدود داخل المستودع أو مقروء من تشغيل اكتمل، والملف مذكور بجانبه. ولا يوجد هنا تقدير لساعات موفَّرة ولا لمال مكتسب، لأن تلك أرقام عن عملك أنت لا عن عملي، ولا أملك طريقة لقياسها.',
+  },
   licenceNote: {
     en:
       'One application per licence; a second application needs a second licence. The licence does not permit reselling or republishing the template itself, or using it to build a competing starter kit.',
@@ -708,6 +772,9 @@ export const PRICING = {
   priceLabel: Copy
   intro: Copy
   includes: readonly Copy[]
+  countsHeading: Copy
+  counts: readonly Counted[]
+  countsNote: Copy
   licenceNote: Copy
   guaranteeHeading: Copy
 }

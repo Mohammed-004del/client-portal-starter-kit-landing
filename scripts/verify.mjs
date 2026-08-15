@@ -171,6 +171,19 @@ const buyHrefs = await page.evaluate(() =>
 )
 ok('every buy button has an absolute destination', buyHrefs.length > 0 && buyHrefs.every((h) => /^https?:\/\/.+/.test(h)), `${buyHrefs.length} links`)
 
+// Same-origin pages linked from here — currently the guide. A nav link that
+// 404s is invisible from the sales page itself, so it is asserted rather than
+// eyeballed.
+const pageHrefs = await page.evaluate(() =>
+  [...new Set(
+    [...document.querySelectorAll('a[href^="/"]')].map((a) => a.getAttribute('href')),
+  )],
+)
+for (const href of pageHrefs) {
+  const res = await page.request.get(new global.URL(href, page.url()).toString())
+  ok(`same-origin page ${href} → ${res.status()}`, res.ok())
+}
+
 // FAQ disclosures must actually open.
 const faqCount = await page.locator('details').count()
 await page.locator('details summary').first().click()

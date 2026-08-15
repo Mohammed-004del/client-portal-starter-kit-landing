@@ -30,6 +30,56 @@ export function Reveal({
   )
 }
 
+/** Small shield mark that ties the guarantee to the offer above it. */
+export function ShieldMark() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="mt-0.5 size-4 shrink-0 text-accent"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 2.5 4.5 5.6v5.6c0 4.6 3.2 8.9 7.5 10 4.3-1.1 7.5-5.4 7.5-10V5.6z" />
+      <path d="m9 12 2.2 2.2L15.4 10" />
+    </svg>
+  )
+}
+
+/**
+ * The promise, with its name attached. One component so a named guarantee can
+ * never end up rendered beside terms other than these.
+ *
+ * `marked` emits the attribute the verification script counts. Exactly one
+ * guarantee per section carries it — the section may restate the promise (the
+ * pricing card does) without that restatement counting as a second pairing.
+ */
+export function Guarantee({
+  marked,
+  className = 'text-sm text-muted',
+}: {
+  marked?: boolean
+  className?: string
+}) {
+  const { t } = useLocale()
+
+  return (
+    <p
+      data-guarantee={marked ? '' : undefined}
+      className={`flex max-w-2xl gap-2.5 leading-relaxed ${className}`}
+    >
+      <ShieldMark />
+      <span>
+        <strong className="font-semibold text-fg">{t(OFFER.guaranteeName)}.</strong>{' '}
+        {t(OFFER.guarantee)}
+      </span>
+    </p>
+  )
+}
+
 /**
  * The buy button and the guarantee, welded together in one component.
  * Every body section renders this exactly once, so the pair cannot drift
@@ -49,9 +99,9 @@ export function CtaBlock({ id }: { id?: string }) {
         {t(OFFER.buy)}
         <Arrow />
       </a>
-      <p className="mt-5 max-w-2xl text-sm leading-relaxed text-muted" data-guarantee>
-        {t(OFFER.guarantee)}
-      </p>
+      <div className="mt-5">
+        <Guarantee marked />
+      </div>
       {CHECKOUT_IS_PLACEHOLDER && (
         <p className="mt-2 text-xs text-faint">{t(OFFER.checkoutPlaceholderNote)}</p>
       )}
@@ -281,7 +331,7 @@ export function Contact() {
  * silent success path — a failed request says so and says nothing was stored,
  * because a form that swallows an address is worse than no form.
  */
-export function SignupForm() {
+export function SignupForm({ heading, body }: { heading?: string; body?: string } = {}) {
   const { t } = useLocale()
   const [state, setState] = useState<'idle' | 'sending' | 'ok' | 'invalid' | 'failed'>('idle')
   const [email, setEmail] = useState('')
@@ -311,8 +361,11 @@ export function SignupForm() {
 
   return (
     <div className="glass mt-4 rounded-2xl p-6 sm:p-8">
-      <h3 className="text-lg font-semibold text-fg">{t(SIGNUP.heading)}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted">{t(SIGNUP.body)}</p>
+      {/* The guide states a different reason for leaving an address than the
+          sales page does, so both are overridable — but the field, the
+          endpoint and the failure behaviour stay identical. */}
+      <h3 className="text-lg font-semibold text-fg">{heading ?? t(SIGNUP.heading)}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{body ?? t(SIGNUP.body)}</p>
 
       {/* noValidate on purpose: the browser's own validation bubble speaks the
           browser's language, not the page's, so an Arabic reader would get an

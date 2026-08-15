@@ -31,6 +31,7 @@ import {
   CtaBlock,
   DefList,
   Faq,
+  Guarantee,
   Prose,
   Reveal,
   Section,
@@ -153,25 +154,6 @@ function Nav() {
   )
 }
 
-/** Small shield mark that ties the guarantee to the offer above it. */
-function ShieldMark() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="mt-0.5 size-4 shrink-0 text-accent"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M12 2.5 4.5 5.6v5.6c0 4.6 3.2 8.9 7.5 10 4.3-1.1 7.5-5.4 7.5-10V5.6z" />
-      <path d="m9 12 2.2 2.2L15.4 10" />
-    </svg>
-  )
-}
-
 /**
  * The hero visual: a device drawn in CSS holding the real recording, with
  * decorative marks floating around it. Nothing here depicts data — the only
@@ -281,10 +263,7 @@ function Hero() {
           {/* The promise, set apart from the offer by a rule and a mark so the
               two do not read as one block of small print. */}
           <div data-hero className="mt-8 max-w-xl border-t border-line pt-5">
-            <p className="flex gap-2.5 text-sm leading-relaxed text-muted" data-guarantee>
-              <ShieldMark />
-              <span>{t(OFFER.guarantee)}</span>
-            </p>
+            <Guarantee marked />
           </div>
         </div>
 
@@ -601,7 +580,35 @@ function Pricing() {
               <span className="text-sm text-muted">{t(PRICING.priceLabel)}</span>
             </p>
 
-            <ul className="mt-10 space-y-4">
+            {/* The value stack, made of counted artefacts rather than the
+                estimated hours this pattern normally stacks against a price.
+                Each figure names the file it was counted from, and the note
+                below says outright that nothing here is an estimate. */}
+            <h3 className="mt-10 border-t border-line pt-8 text-sm font-semibold uppercase tracking-[0.15em] text-accent">
+              {t(PRICING.countsHeading)}
+            </h3>
+            <dl className="mt-6 grid gap-x-6 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+              {PRICING.counts.map((item) => (
+                <div key={item.label.en}>
+                  <dt className="flex items-baseline gap-2">
+                    <span className="font-mono text-3xl font-bold tracking-tight text-fg" dir="ltr">
+                      {item.n}
+                    </span>
+                    <span className="text-sm font-medium text-muted">{t(item.label)}</span>
+                  </dt>
+                  {/* The source, not a sales line — kept LTR because every one
+                      of these is a filename or an identifier. */}
+                  <dd className="mt-1.5 font-mono text-xs leading-relaxed text-faint">
+                    {t(item.note)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p className="mt-7 max-w-2xl text-sm leading-relaxed text-faint">
+              {t(PRICING.countsNote)}
+            </p>
+
+            <ul className="mt-10 space-y-4 border-t border-line pt-8">
               {PRICING.includes.map((item) => (
                 <li key={item.en} className="flex gap-3 text-base leading-relaxed text-muted">
                   <span aria-hidden="true" className="mt-1 shrink-0 text-accent">
@@ -629,7 +636,11 @@ function Pricing() {
             <h3 className="mt-8 text-sm font-semibold uppercase tracking-[0.15em] text-accent">
               {t(PRICING.guaranteeHeading)}
             </h3>
-            <p className="mt-3 text-base leading-relaxed text-fg">{t(OFFER.guarantee)}</p>
+            {/* Unmarked: the section's one counted CTA+guarantee pair is the
+                CtaBlock below. This is the same promise restated in full. */}
+            <div className="mt-3">
+              <Guarantee className="text-base text-fg" />
+            </div>
           </div>
         </div>
       </Reveal>

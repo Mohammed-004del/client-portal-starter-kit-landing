@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0b0c" />
+
+    <title>Your RLS tests are green. Here is how to find out if they are lying to you.</title>
+    <meta
+      name="description"
+      content="A field guide to auditing row-level security in a Supabase project: the six kinds of guard a schema actually has, the test-suite failure mode nobody talks about, and a 12-point checklist you can run before you hand a client portal over."
+    />
+
+    <!-- Absolute URLs: crawlers do not resolve relative paths. If the domain
+         changes, these and the canonical link change with it. -->
+    <link rel="canonical" href="https://client-portal-starter-kit-landing.vercel.app/guide" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://client-portal-starter-kit-landing.vercel.app/guide" />
+    <meta property="og:locale" content="en_US" />
+    <meta
+      property="og:title"
+      content="Your RLS tests are green. Here is how to find out if they are lying to you."
+    />
+    <meta
+      property="og:description"
+      content="A field guide to auditing row-level security in a Supabase project: the six kinds of guard a schema actually has, the test-suite failure mode nobody talks about, and a 12-point checklist you can run before you hand a client portal over."
+    />
+    <!-- The product this guide came out of. A real screenshot, described as
+         what it is — there is no separate share image for the guide, and
+         inventing one would be the first false thing on the page. -->
+    <meta
+      property="og:image"
+      content="https://client-portal-starter-kit-landing.vercel.app/assets/video/hero-poster.webp"
+    />
+    <meta
+      property="og:image:alt"
+      content="The client portal in the Client Portal Starter Kit, showing one client's records."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:image"
+      content="https://client-portal-starter-kit-landing.vercel.app/assets/video/hero-poster.webp"
+    />
+    <meta
+      name="twitter:title"
+      content="Your RLS tests are green. Here is how to find out if they are lying to you."
+    />
+    <meta
+      name="twitter:description"
+      content="A field guide to auditing row-level security in a Supabase project: the six kinds of guard a schema actually has, the test-suite failure mode nobody talks about, and a 12-point checklist you can run before you hand a client portal over."
+    />
+
+    <!-- Apply the stored language before first paint, so an Arabic reader never
+         sees a frame of left-to-right layout. React takes over from here. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('cpsk-locale')
+          if (stored === 'ar' || stored === 'en') {
+            document.documentElement.lang = stored
+            document.documentElement.dir = stored === 'ar' ? 'rtl' : 'ltr'
+          }
+        } catch (e) {
+          /* storage unavailable; default English stays */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/guide.tsx"></script>
+  </body>
+</html>

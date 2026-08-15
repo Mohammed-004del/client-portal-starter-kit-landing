@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { DEFAULT_LOCALE, DIR, META, type Locale } from './content'
+import { DEFAULT_LOCALE, DIR, META, type Copy, type Locale } from './content'
 import {
   isLocale,
   LocaleContext,
@@ -35,7 +35,21 @@ function loadArabicFonts() {
   return arabicFonts
 }
 
-export function LocaleProvider({ children }: { children: ReactNode }) {
+/**
+ * The head is written from exactly one place. A page cannot set its own title
+ * in a child effect instead — child effects run *before* the parent's, so the
+ * provider would overwrite it on every render. The guide passes its own meta
+ * in rather than racing this effect.
+ */
+export type PageMeta = { title: Copy; description: Copy; ogAlt: Copy }
+
+export function LocaleProvider({
+  children,
+  meta = META,
+}: {
+  children: ReactNode
+  meta?: PageMeta
+}) {
   const [locale, setLocaleState] = useState<Locale>(readStoredLocale)
 
   const setLocale = useCallback((next: Locale) => {
@@ -54,15 +68,15 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
     if (locale === 'ar') void loadArabicFonts()
 
-    document.title = META.title[locale]
-    setMeta('meta[name="description"]', META.description[locale])
-    setMeta('meta[property="og:title"]', META.title[locale])
-    setMeta('meta[property="og:description"]', META.description[locale])
+    document.title = meta.title[locale]
+    setMeta('meta[name="description"]', meta.description[locale])
+    setMeta('meta[property="og:title"]', meta.title[locale])
+    setMeta('meta[property="og:description"]', meta.description[locale])
     setMeta('meta[property="og:locale"]', locale === 'ar' ? 'ar_EG' : 'en_US')
-    setMeta('meta[property="og:image:alt"]', META.ogAlt[locale])
-    setMeta('meta[name="twitter:title"]', META.title[locale])
-    setMeta('meta[name="twitter:description"]', META.description[locale])
-  }, [locale])
+    setMeta('meta[property="og:image:alt"]', meta.ogAlt[locale])
+    setMeta('meta[name="twitter:title"]', meta.title[locale])
+    setMeta('meta[name="twitter:description"]', meta.description[locale])
+  }, [locale, meta])
 
   const value = useMemo<LocaleContextValue>(
     () => ({
