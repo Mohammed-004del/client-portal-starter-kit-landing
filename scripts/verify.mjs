@@ -202,17 +202,25 @@ ok(
 
 // Contact is a mailto, not a form. It must carry a real address, and the
 // visible text must match the address it actually opens.
-const mailto = await page.evaluate(() => {
-  const a = document.querySelector('a[href^="mailto:"]')
-  return a ? { href: a.getAttribute('href'), text: (a.textContent || '').trim() } : null
-})
-ok(
-  'contact link is a real mailto and shows the address it opens',
-  !!mailto &&
-    /^mailto:[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mailto.href) &&
-    mailto.href === `mailto:${mailto.text}`,
-  mailto ? `${mailto.href} / shows "${mailto.text}"` : 'no mailto link found',
+const mailtos = await page.evaluate(() =>
+  [...document.querySelectorAll('a[href^="mailto:"]')].map((a) => ({
+    href: a.getAttribute('href'),
+    text: a.textContent.trim(),
+  })),
 )
+ok('page has at least one mailto link', mailtos.length > 0, `count=${mailtos.length}`)
+for (const m of mailtos) {
+  // Split the address from any prefill query. A subject is legitimate; an
+  // address that differs from the visible text is the thing being ruled out.
+  const [address, query = ''] = m.href.replace(/^mailto:/, '').split('?')
+  const paramsOk = query === '' || [...new URLSearchParams(query).keys()].every((k) => k === 'subject' || k === 'body')
+  ok(
+    `mailto opens the address it displays — ${m.text}`,
+    /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(address) && address === m.text && paramsOk,
+    `${m.href} / shows "${m.text}"`,
+  )
+}
+
 // The signup form must reject a bad address in the browser and say so, without
 // touching the network. Deliberately not submitting a valid address here: the
 // gate runs often and would otherwise write a row into the real table each time.

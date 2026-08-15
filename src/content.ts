@@ -1,4 +1,11 @@
-import { PRICE_USD, RUNS } from './config'
+import {
+  CURRENT_PRICE_USD,
+  LAUNCH_ACTIVE,
+  LAUNCH_SEATS,
+  MANUAL_DELIVERY_HOURS,
+  PRICE_USD,
+  RUNS,
+} from './config'
 
 export type Locale = 'en' | 'ar'
 
@@ -69,14 +76,15 @@ export const NAV = {
 /* ------------------------------------------------------- offer + promise */
 
 export const OFFER = {
+  /** Always the price checkout will actually charge — see CURRENT_PRICE_USD. */
   buy: {
-    en: `Buy — $${PRICE_USD}`,
-    ar: `اشترِ الآن — ${PRICE_USD} دولارًا`,
+    en: `Buy — $${CURRENT_PRICE_USD}`,
+    ar: `اشترِ الآن — ${CURRENT_PRICE_USD} دولارًا`,
   },
   /** Opens with the button's visible text verbatim — see LOCALE_SWITCH_ARIA. */
   buyAria: {
-    en: `Buy — $${PRICE_USD}. Client Portal Starter Kit, one-time payment.`,
-    ar: `اشترِ الآن — ${PRICE_USD} دولارًا. Client Portal Starter Kit، دفعة واحدة.`,
+    en: `Buy — $${CURRENT_PRICE_USD}. Client Portal Starter Kit, one-time payment.`,
+    ar: `اشترِ الآن — ${CURRENT_PRICE_USD} دولارًا. Client Portal Starter Kit، دفعة واحدة.`,
   },
   watch: { en: 'Watch the walkthrough', ar: 'شاهد الجولة الكاملة' },
   /**
@@ -101,6 +109,47 @@ export const OFFER = {
   checkoutPlaceholderNote: {
     en: 'Checkout link is a placeholder in this build and does not take payment.',
     ar: 'رابط الدفع في هذه النسخة مؤقت ولا يستقبل أي مدفوعات.',
+  },
+} satisfies Record<string, Copy>
+
+/**
+ * The launch offer and, more importantly, the reason it exists. A price cut
+ * without a stated reason reads as a trap or as padding in the original price;
+ * this one has a real reason and says it plainly.
+ *
+ * Rendered only while LAUNCH_ACTIVE. Nothing here restates the price — that
+ * comes from CURRENT_PRICE_USD, so copy and checkout cannot disagree.
+ */
+export const LAUNCH = {
+  label: { en: 'Launch offer', ar: 'عرض الإطلاق' },
+  heading: {
+    en: `The first ${LAUNCH_SEATS} licences are $${CURRENT_PRICE_USD}. After that it is $${PRICE_USD}, and it stays there.`,
+    ar: `أول ${LAUNCH_SEATS} رخصة بـ ${CURRENT_PRICE_USD} دولارًا. وبعدها ${PRICE_USD} دولارًا، ويبقى كذلك.`,
+  },
+  body: {
+    en: [
+      'Not because the product is smaller at that price. Because it has no customers yet, and I need twenty people to run the guard sweep on their own machines and tell me what happened on theirs.',
+      'That is what the lower price is buying: being early, and telling me what you found. Everything in the box is identical either way — the same source, the same licence, the same guarantee.',
+      `The count is enforced by the checkout itself rather than by my memory: the discount is capped at ${LAUNCH_SEATS} redemptions and stops applying on its own. There is no countdown here and no running tally, because a number you cannot check is not evidence of anything.`,
+    ],
+    ar: [
+      'ليس لأن المنتج أصغر عند ذلك السعر. بل لأنه بلا عملاء حتى الآن، وأحتاج عشرين شخصًا يشغّلون الـ guard sweep على أجهزتهم ويخبرونني بما حدث عندهم.',
+      'هذا ما يشتريه السعر الأقل: أن تكون مبكرًا، وأن تخبرني بما وجدته. وما في الصندوق واحد في الحالتين — المصدر نفسه، والرخصة نفسها، والضمان نفسه.',
+      `والعدد يفرضه الدفع نفسه لا ذاكرتي: الخصم محدود بـ ${LAUNCH_SEATS} استخدامًا ويتوقف عن العمل وحده. ولا يوجد هنا عدّاد تنازلي ولا رقم متحرك، لأن رقمًا لا تستطيع التحقق منه ليس دليلًا على شيء.`,
+    ],
+  },
+} satisfies Record<string, Copy | CopyList>
+
+/**
+ * The second payment route. The account details are deliberately not here —
+ * they are arranged in a reply, so a page that ranks in search never carries a
+ * personal number that is also a bank identifier.
+ */
+export const LOCAL_PAY = {
+  heading: { en: 'Paying without an international card', ar: 'الدفع بدون بطاقة دولية' },
+  body: {
+    en: `Lemon Squeezy needs an international card, and plenty of developers in Egypt and the Gulf do not have one. If that is you, email me and I will send you a local payment option. It is arranged by hand, so allow up to ${MANUAL_DELIVERY_HOURS} hours between paying and receiving the files — and the guarantee covers you exactly as it covers a card payment.`,
+    ar: `تحتاج Lemon Squeezy إلى بطاقة دولية، وكثير من المطوّرين في مصر والخليج لا يملكون واحدة. إن كنت منهم، راسلني وسأرسل لك وسيلة دفع محلية. الأمر يتم يدويًا، فاحسب ما يصل إلى ${MANUAL_DELIVERY_HOURS} ساعة بين الدفع واستلام الملفات — والضمان يغطيك تمامًا كما يغطي الدفع بالبطاقة.`,
   },
 } satisfies Record<string, Copy>
 
@@ -701,8 +750,24 @@ export const STACK = {
 
 export const PRICING = {
   eyebrow: { en: 'Pricing', ar: 'السعر' },
-  heading: { en: `One tier. $${PRICE_USD}, paid once.`, ar: `فئة واحدة. ${PRICE_USD} دولارًا، تُدفع مرة واحدة.` },
+  heading: {
+    en: `One tier. $${CURRENT_PRICE_USD}, paid once.`,
+    ar: `فئة واحدة. ${CURRENT_PRICE_USD} دولارًا، تُدفع مرة واحدة.`,
+  },
   priceLabel: { en: 'one-time', ar: 'دفعة واحدة' },
+  /**
+   * Sits beside the price while the launch runs. Says what the price becomes
+   * and why it is lower now — never a struck-through "was" number, because the
+   * $129 is the future price, not a past one that was inflated to discount.
+   */
+  priceNote: {
+    en: LAUNCH_ACTIVE
+      ? `Launch price — the first ${LAUNCH_SEATS} licences. $${PRICE_USD} after that.`
+      : '',
+    ar: LAUNCH_ACTIVE
+      ? `سعر الإطلاق — لأول ${LAUNCH_SEATS} رخصة. وبعدها ${PRICE_USD} دولارًا.`
+      : '',
+  },
   intro: {
     en:
       'No subscription, no seats, no usage tier. It is source code that runs on infrastructure you own, so there is no service of mine to keep paying for.',
@@ -771,6 +836,7 @@ export const PRICING = {
   heading: Copy
   priceLabel: Copy
   intro: Copy
+  priceNote: Copy
   includes: readonly Copy[]
   countsHeading: Copy
   counts: readonly Counted[]

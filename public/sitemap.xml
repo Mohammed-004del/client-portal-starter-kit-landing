@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Two pages, both bilingual through one URL each: the language is a client-side
+  toggle, so there is no separate /ar path to declare. Keep lastmod honest —
+  update it when the page's content changes, not on every deploy.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://client-portal-starter-kit-landing.vercel.app/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://client-portal-starter-kit-landing.vercel.app/guide</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+</urlset>

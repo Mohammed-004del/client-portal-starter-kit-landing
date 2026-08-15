@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# The captured runs are linked from both pages and are the evidence behind
+# every number on them. They are meant to be readable, including by crawlers.
+Allow: /assets/terminal/
+
+Sitemap: https://client-portal-starter-kit-landing.vercel.app/sitemap.xml

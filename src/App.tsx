@@ -1,5 +1,11 @@
 import { useRef } from 'react'
-import { ASSETS, CHECKOUT_URL, PRICE_USD } from './config'
+import {
+  ASSETS,
+  CHECKOUT_URL,
+  CONTACT_EMAIL,
+  CURRENT_PRICE_USD,
+  LAUNCH_ACTIVE,
+} from './config'
 import {
   DIFFERENTIATOR,
   ENFORCEMENT,
@@ -7,7 +13,9 @@ import {
   FOOTER,
   HERO,
   INCLUDED,
+  LAUNCH,
   LIMITS,
+  LOCAL_PAY,
   LOCALE_SWITCH_ARIA,
   LOCALE_SWITCH_LABEL,
   NAV,
@@ -575,10 +583,32 @@ function Pricing() {
                 className="bg-linear-to-br from-fg to-accent bg-clip-text text-display font-bold tracking-tight text-transparent"
                 dir="ltr"
               >
-                ${PRICE_USD}
+                ${CURRENT_PRICE_USD}
               </span>
               <span className="text-sm text-muted">{t(PRICING.priceLabel)}</span>
             </p>
+            {LAUNCH_ACTIVE && (
+              <p className="mt-3 text-sm font-medium text-accent">{t(PRICING.priceNote)}</p>
+            )}
+
+            {/* The reason the launch price exists, next to the launch price.
+                A cut with no stated reason reads either as a trap or as proof
+                the standing price was padded. */}
+            {LAUNCH_ACTIVE && (
+              <div className="mt-10 rounded-2xl border border-accent/30 bg-accent/5 p-6">
+                <p className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
+                  {t(LAUNCH.label)}
+                </p>
+                <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight text-fg md:text-xl">
+                  {t(LAUNCH.heading)}
+                </h3>
+                <div className="mt-4 space-y-3 text-base leading-relaxed text-muted">
+                  {t(LAUNCH.body).map((p) => (
+                    <p key={p.slice(0, 40)}>{p}</p>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* The value stack, made of counted artefacts rather than the
                 estimated hours this pattern normally stacks against a price.
@@ -632,6 +662,20 @@ function Pricing() {
             <p className="mt-10 border-t border-line pt-6 text-sm leading-relaxed text-faint">
               {t(PRICING.licenceNote)}
             </p>
+
+            {/* The second payment route. No account details here on purpose —
+                they are sent in a reply, not published. */}
+            <div className="mt-8 rounded-2xl border border-line bg-raised p-5">
+              <h3 className="text-sm font-semibold text-fg">{t(LOCAL_PAY.heading)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{t(LOCAL_PAY.body)}</p>
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Local payment — Client Portal Starter Kit')}`}
+                dir="ltr"
+                className="mt-3 inline-block max-w-full break-all font-mono text-sm text-accent underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-accent"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </div>
 
             <h3 className="mt-8 text-sm font-semibold uppercase tracking-[0.15em] text-accent">
               {t(PRICING.guaranteeHeading)}
