@@ -31,6 +31,9 @@ import { Arrow, Contact, Reveal, SignupForm } from './ui'
  * dressed as a captured terminal would break it.
  */
 function CodeBlock({ label, body, lang }: { label: string; body: string; lang?: string }) {
+  // `lang` is a human-language attribute — putting "sql" in it is invalid and
+  // tells a screen reader to pronounce the block in a language that does not
+  // exist. The language of a code sample belongs in a data attribute.
   return (
     <Reveal>
       <figure className="my-8">
@@ -43,7 +46,7 @@ function CodeBlock({ label, body, lang }: { label: string; body: string; lang?: 
           dir="ltr"
           className="verbatim overflow-x-auto rounded-2xl border border-line bg-surface px-4 py-5 text-[0.8125rem] leading-relaxed text-fg"
         >
-          <code lang={lang}>{body}</code>
+          <code data-lang={lang}>{body}</code>
         </pre>
       </figure>
     </Reveal>
