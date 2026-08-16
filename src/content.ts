@@ -88,6 +88,26 @@ export const OFFER = {
   },
   watch: { en: 'Watch the walkthrough', ar: 'شاهد الجولة الكاملة' },
   /**
+   * The offer, restated under every button beside the guarantee — so the two
+   * arguments for buying are in front of the reader wherever they stop, not
+   * only in the pricing section.
+   *
+   * Deliberately not a struck-through $129: a strikethrough claims a price
+   * that was charged before, and this product launched at $89 — the $129 is
+   * the price it becomes. Stated forward it is both true and the stronger
+   * pressure, because a price about to rise moves faster than one that fell.
+   *
+   * Empty once the launch ends, and the button's own price carries it alone.
+   */
+  priceLine: {
+    en: LAUNCH_ACTIVE
+      ? `$${CURRENT_PRICE_USD} — launch price for the first ${LAUNCH_SEATS} licences. $${PRICE_USD} after that.`
+      : '',
+    ar: LAUNCH_ACTIVE
+      ? `${CURRENT_PRICE_USD} دولارًا — سعر الإطلاق لأول ${LAUNCH_SEATS} رخصة. وبعدها ${PRICE_USD} دولارًا.`
+      : '',
+  },
+  /**
    * A guarantee nobody can name is a guarantee nobody repeats. This is the
    * handle for the promise below it, and it is rendered by the same component,
    * so the name can never end up attached to different terms than these.
@@ -755,19 +775,6 @@ export const PRICING = {
     ar: `فئة واحدة. ${CURRENT_PRICE_USD} دولارًا، تُدفع مرة واحدة.`,
   },
   priceLabel: { en: 'one-time', ar: 'دفعة واحدة' },
-  /**
-   * Sits beside the price while the launch runs. Says what the price becomes
-   * and why it is lower now — never a struck-through "was" number, because the
-   * $129 is the future price, not a past one that was inflated to discount.
-   */
-  priceNote: {
-    en: LAUNCH_ACTIVE
-      ? `Launch price — the first ${LAUNCH_SEATS} licences. $${PRICE_USD} after that.`
-      : '',
-    ar: LAUNCH_ACTIVE
-      ? `سعر الإطلاق — لأول ${LAUNCH_SEATS} رخصة. وبعدها ${PRICE_USD} دولارًا.`
-      : '',
-  },
   intro: {
     en:
       'No subscription, no seats, no usage tier. It is source code that runs on infrastructure you own, so there is no service of mine to keep paying for.',
@@ -836,7 +843,6 @@ export const PRICING = {
   heading: Copy
   priceLabel: Copy
   intro: Copy
-  priceNote: Copy
   includes: readonly Copy[]
   countsHeading: Copy
   counts: readonly Counted[]

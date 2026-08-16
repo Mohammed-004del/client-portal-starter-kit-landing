@@ -99,7 +99,12 @@ export function CtaBlock({ id }: { id?: string }) {
         {t(OFFER.buy)}
         <Arrow />
       </a>
-      <div className="mt-5">
+      {/* Offer then promise, in that order, under every button on the page —
+          the two reasons to buy, wherever the reader happens to stop. */}
+      {t(OFFER.priceLine) && (
+        <p className="mt-4 text-sm font-medium text-accent">{t(OFFER.priceLine)}</p>
+      )}
+      <div className="mt-3">
         <Guarantee marked />
       </div>
       {CHECKOUT_IS_PLACEHOLDER && (

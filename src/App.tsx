@@ -271,6 +271,9 @@ function Hero() {
           {/* The promise, set apart from the offer by a rule and a mark so the
               two do not read as one block of small print. */}
           <div data-hero className="mt-8 max-w-xl border-t border-line pt-5">
+            {t(OFFER.priceLine) && (
+              <p className="mb-4 text-sm font-medium text-accent">{t(OFFER.priceLine)}</p>
+            )}
             <Guarantee marked />
           </div>
         </div>
@@ -587,8 +590,8 @@ function Pricing() {
               </span>
               <span className="text-sm text-muted">{t(PRICING.priceLabel)}</span>
             </p>
-            {LAUNCH_ACTIVE && (
-              <p className="mt-3 text-sm font-medium text-accent">{t(PRICING.priceNote)}</p>
+            {t(OFFER.priceLine) && (
+              <p className="mt-3 text-sm font-medium text-accent">{t(OFFER.priceLine)}</p>
             )}
 
             {/* The reason the launch price exists, next to the launch price.
