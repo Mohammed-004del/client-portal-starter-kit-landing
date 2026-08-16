@@ -19,14 +19,13 @@ export const PRICE_USD = 129
  * refuses everywhere else; the offer is stated as a rule instead of a running
  * total, which stays true without maintenance.
  *
- * ⚠️ HELD FALSE until the discount is verified applying at checkout.
- * Checked 2026-08-16 against the live variant with the documented parameter
- * `?checkout[discount_code]=M5NTY0MG`, raw and percent-encoded: the page
- * rendered $129.00, the button read "Pay $129.00", and the checkout showed no
- * discount field at all. Both branches below are built and tested — flip to
- * true once a checkout opened from CHECKOUT_URL actually shows $89.
+ * Verified 2026-08-16 by opening CHECKOUT_URL: subtotal $129.00, discount
+ * G1NDC5MG −$40.00, total $89.00, button "Pay $89.00". An earlier code scoped
+ * to "All products" did not apply and showed no discount field at all; scoping
+ * it to this product's single variant is what fixed it. Re-check the total
+ * before turning this on again — the code, not the page, decides the price.
  */
-export const LAUNCH_ACTIVE = false
+export const LAUNCH_ACTIVE = true
 export const LAUNCH_PRICE_USD = 89
 export const LAUNCH_SEATS = 20
 
@@ -50,7 +49,7 @@ const CHECKOUT_BASE =
  * by design: what limits it is the 20-redemption cap on the discount itself,
  * not secrecy.
  */
-const LAUNCH_DISCOUNT_CODE = 'M5NTY0MG'
+const LAUNCH_DISCOUNT_CODE = 'G1NDC5MG'
 
 export const CHECKOUT_URL = LAUNCH_ACTIVE
   ? `${CHECKOUT_BASE}?checkout[discount_code]=${LAUNCH_DISCOUNT_CODE}`
